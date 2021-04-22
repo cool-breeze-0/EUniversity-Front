@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.predict.PredictFragment">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="18dp">
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/predict_toolbar_title"
+                android:textSize="@dimen/actionbar_text_size" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+<!--    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout-->
+<!--        android:id="@+id/refreshLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar"-->
+<!--        app:tr_head_height="100dp"-->
+<!--        app:tr_wave_height="180dp">-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/predictBackgroundImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/predict_background_image_height"
+                android:scaleType="fitXY"
+                android:src="@drawable/predict_background_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="180dp"
+                android:layout_marginBottom="@dimen/universal_margin_left_right"
+                android:layout_marginStart="@dimen/predict_linearlayout_margin_left_right"
+                android:layout_marginEnd="@dimen/predict_linearlayout_margin_left_right"
+                android:background="@drawable/shape_cornors"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/predictBackgroundImage"
+                app:layout_constraintVertical_bias="0.0">
+
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginTop="@dimen/universal_margin_left_right_short"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/predict_admission_division" />
+
+                <TextView
+                    android:id="@+id/predictAdmissionDivisionInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:background="@drawable/shape_cornors_gray"
+                    android:paddingStart="@dimen/predict_input_textview_padding"
+                    android:paddingTop="@dimen/predict_input_textview_padding"
+                    android:paddingEnd="@dimen/predict_input_textview_padding"
+                    android:paddingBottom="@dimen/predict_input_textview_padding"
+                    android:textSize="@dimen/predict_input_text_size" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginTop="@dimen/universal_margin_left_right_short"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:text="@string/predict_birthplace" />
+
+                <TextView
+                    android:id="@+id/predictBirthplaceInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:background="@drawable/shape_cornors_gray"
+                    android:paddingStart="@dimen/predict_input_textview_padding"
+                    android:paddingTop="@dimen/predict_input_textview_padding"
+                    android:paddingEnd="@dimen/predict_input_textview_padding"
+                    android:paddingBottom="@dimen/predict_input_textview_padding"
+                    android:textSize="@dimen/predict_input_text_size" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginTop="@dimen/universal_margin_left_right_short"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:text="@string/predict_favorite_college" />
+
+                <EditText
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:background="@drawable/shape_cornors_gray"
+                    android:paddingStart="@dimen/predict_input_textview_padding"
+                    android:paddingTop="@dimen/predict_input_textview_padding"
+                    android:paddingEnd="@dimen/predict_input_textview_padding"
+                    android:paddingBottom="@dimen/predict_input_textview_padding"
+                    android:textSize="@dimen/predict_input_text_size" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginTop="@dimen/universal_margin_left_right_short"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:text="@string/predict_estimated_score" />
+
+                <EditText
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:background="@drawable/shape_cornors_gray"
+                    android:paddingStart="@dimen/predict_input_textview_padding"
+                    android:paddingTop="@dimen/predict_input_textview_padding"
+                    android:paddingEnd="@dimen/predict_input_textview_padding"
+                    android:paddingBottom="@dimen/predict_input_textview_padding"
+                    android:textSize="@dimen/predict_input_text_size" />
+
+                <Button
+                    android:id="@+id/predictButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/universal_margin_left_right"
+                    android:layout_marginEnd="@dimen/universal_margin_left_right"
+                    android:layout_marginBottom="@dimen/universal_margin_left_right_short"
+                    android:background="@color/buttonColor"
+                    android:text="@string/predict_button"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/predict_button_text_size" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+<!--    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>-->
+</androidx.constraintlayout.widget.ConstraintLayout>

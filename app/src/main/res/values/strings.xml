@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">EUniversity</string>
+    <string name="app_name_chinese">E大学</string>
+    <string name="finish">完成</string>
+    <string name="title_home">首页</string>
+    <string name="title_user">我的</string>
+    <string name="title_dashboard">问答社区</string>
+    <string name="title_notifications">预测</string>
+    <string name="user_account_hint_input_phone">请输入手机号</string>
+    <string name="user_login_register">登录/注册</string>
+    <string name="user_login">登录</string>
+    <string name="user_profile_information">个人信息</string>
+    <string name="user_profile_information_name">昵称：</string>
+    <string name="user_profile_information_gender">性别：</string>
+    <string name="user_profile_information_province">省份：</string>
+    <string name="user_profile_information_city">城市：</string>
+    <string name="user_profile_information_identity">用户身份：</string>
+    <string name="user_account_hint_input_password">请输入密码</string>
+    <string name="user_account_get_verification_code">获取验证码</string>
+    <string name="user_account_hint_input_verification_code">请输入验证码</string>
+    <string name="user_account_protocol">我已阅读并同意用户协议和隐私政策</string>
+    <string name="user_account_login">立即登录</string>
+    <string name="user_account_forget_password">忘记密码</string>
+    <string name="user_account_register_new_user">注册新用户</string>
+    <string name="user_register">注册</string>
+    <string name="user_account_hint_input_password_again">请再次输入密码</string>
+    <string name="user_account_register">立即注册</string>
+    <string name="user_retrieve_password">找回密码</string>
+    <string name="user_account_hint_input_new_password">请输入新密码</string>
+    <string name="user_account_hint_input_new_password_again">请再次输入新密码</string>
+    <string name="user_change_password">修改密码</string>
+    <string name="user_account_hint_input_old_password">请输入原密码</string>
+    <string name="user_about_us_version">版本号：V1.0.0</string>
+    <string name="user_about_us_telephone">电话：150-7915-2561</string>
+    <string name="user_about_us_toolbar_title">关于我们</string>
+    <string name="user_about_us_email">邮箱：792110498@qq.com</string>
+    <string name="user_about_us_qq">QQ：792110498</string>
+    <string name="user_help_toolbar_title">帮助</string>
+    <string name="user_help_common_problem">常见问题</string>
+    <string name="user_common_problem_toolbar_title">常见问题</string>
+    <string name="predict_toolbar_title">预测录取结果</string>
+    <string name="predict_admission_division">录取科类</string>
+    <string name="predict_birthplace">生源地</string>
+    <string name="predict_favorite_college">心仪院校</string>
+    <string name="predict_estimated_score">预估分</string>
+    <string name="predict_button">立即预测</string>
+    <string name="predict_result_toolbar_title">预测结果</string>
+    <string name="predict_result_prompt">预测您被心仪院校录取的概率为</string>
+    <string name="community_toolbar_title">问答社区</string>
+    <string name="community_my_problem">我的提问</string>
+    <string name="community_my_answer">我的回答</string>
+    <string name="community_common_problem">常见问题</string>
+    <string name="community_ask_problem">我来提问</string>
+    <string name="community_problem_answer_item_view_all_answer">查看所有回答</string>
+    <string name="community_menu_comprehensive_sort">综合排序</string>
+    <string name="community_menu_quality_sort">按质量排序</string>
+    <string name="community_menu_time_sort">按时间排序</string>
+    <string name="community_toolbar_title_problem_details">问题详情</string>
+    <string name="community_problem_details_answer_problem">我来回答</string>
+    <string name="community_toolbar_title_answer_details">回答详情</string>
+    <string name="home_toolbar_title">主页</string>
+    <string name="home_filter_title">筛选</string>
+    <string name="cancel">取消</string>
+    <string name="home_filter_type_university_type">院校类型</string>
+    <string name="home_filter_type_university_level">院校层次</string>
+    <string name="home_filter_type_education_level">学历层次</string>
+    <string name="home_filter_type_university_nature">办学性质</string>
+    <string name="home_filter_type_area">所在地区</string>
+    <string name="reset">重置</string>
+    <string name="determine">确定</string>
+    <string name="home_toolbar_title_university_details">院校详情</string>
+
+
+    <string-array name="communityBannerImage">
+        <item>@mipmap/community_banner_image1</item>
+        <item>@mipmap/community_banner_image2</item>
+        <item>@mipmap/community_banner_image3</item>
+        <item>@mipmap/community_banner_image4</item>
+    </string-array>
+    <string-array name="homeBannerImage">
+        <item>@mipmap/home_banner_image1</item>
+        <item>@mipmap/home_banner_image2</item>
+        <item>@mipmap/home_banner_image3</item>
+        <item>@mipmap/home_banner_image4</item>
+    </string-array>
+</resources>

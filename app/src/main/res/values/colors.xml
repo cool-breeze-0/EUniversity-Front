@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="community_problem_answer_item_background">#deedf2</color>
+    <color name="title_checked">#3c53df</color>
+    <color name="white">#FFFFFF</color>
+    <color name="appBackground">#f7f7f7</color>
+    <color name="buttonColor">#2c87fa</color>
+    <color name="userItemIcon">#BEBEBE</color>
+    <color name="transparent">#000000</color>
+    <color name="userAboutUsTextColor">#5b80eb</color>
+    <color name="predictResultPromptTextColor">#00ff06</color>
+    <color name="predictResultDataTextColor">#eb1919</color>
+    <color name="predictResultWarningTextColor" >#dfd93e</color>
+    <color name="floatingActionButtonBackground">#1e6fff</color>
+</resources>
