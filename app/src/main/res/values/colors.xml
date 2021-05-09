@@ -11,6 +11,7 @@
     <color name="userItemIcon">#BEBEBE</color>
     <color name="transparent">#000000</color>
     <color name="userAboutUsTextColor">#5b80eb</color>
+    <color name="userAccountProtocolColor">#5b80eb</color>
     <color name="predictResultPromptTextColor">#00ff06</color>
     <color name="predictResultDataTextColor">#eb1919</color>
     <color name="predictResultWarningTextColor" >#dfd93e</color>

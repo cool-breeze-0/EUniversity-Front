@@ -7,4 +7,6 @@ import com.example.euniversity.entity.CommunityProblemAnswerItem
 
 class CommunityViewModel : ViewModel() {
     var problemAnswerList=MutableLiveData<List<CommunityProblemAnswerItem>>()
+    var myProblemList=MutableLiveData<List<CommunityProblemAnswerItem>>()
+    var myAnswerList=MutableLiveData<List<CommunityProblemAnswerItem>>()
 }

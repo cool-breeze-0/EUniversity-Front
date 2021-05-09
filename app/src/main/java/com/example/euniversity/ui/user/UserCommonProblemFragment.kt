@@ -11,8 +11,6 @@ import com.example.euniversity.R
 class UserCommonProblemFragment : Fragment() {
     private lateinit var userApplicationContentActivity: UserApplicationContentActivity
     private val TAG="UserCommonProblemFragment"
-    private val commonProblem=ArrayList<String>()
-    private val commonAnswer=ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -33,30 +31,41 @@ class UserCommonProblemFragment : Fragment() {
 
         //配置具体的问题以及解答，从数据库中通过ID（即所处的第几个问题）查找问题以及解答
         //目前尚未完成功能，通过字符串列表存取问题和解答进行测试
-        initProblemAnswer()
+//        initProblemAnswer()
+        val commonProblem=resources.getStringArray(R.array.userCommonProblem)
+        val commonProblemList=ArrayList<String>()
+        val commonAnswerList=ArrayList<String>()
+        for(i in 0 until commonProblem.size){
+            if(i%2==0){
+                commonProblemList.add(commonProblem[i])
+            }else{
+                commonAnswerList.add(commonProblem[i])
+            }
+        }
         val commonProblemTextView:TextView=view.findViewById(R.id.commonProblemTextView)
         val commonAnswerTextView:TextView=view.findViewById(R.id.commonAnswerTextView)
-        commonProblemTextView.setText(commonProblem.get(UserHelpFragment.getProblemPosition()))
-        commonAnswerTextView.setText(commonAnswer.get(UserHelpFragment.getProblemPosition()))
+        commonProblemTextView.setText(commonProblemList.get(UserHelpFragment.getProblemPosition()))
+        commonAnswerTextView.setText(commonAnswerList.get(UserHelpFragment.getProblemPosition()))
 
         return view
     }
 
     /**
      * 初始化问题及解答
+
+//    private fun initProblemAnswer(){
+//        commonProblem.add("用户协议")
+//        commonProblem.add("隐私政策")
+//        commonAnswer.add("用户协议\n" +
+//                "\n" +
+//                "（以下简称“本公司”）按照下列条款与条件提供信息和产品，您在本协议中亦可被称为“用户”，以下所述条款和条" +
+//                "件将构成您与本公司，就您使用提供的内容所达成的全部协议（以下称“本协议”）。")
+//        commonAnswer.add("隐私政策的适用范围:\n" +
+//                "\n" +
+//                "除某些特定服务外，我们所有的服务均适用本《隐私政策》。这些特定服务将适用特定的隐私政策。针对某些特定服务" +
+//                "的特定隐私政策，将更具体地说明我们在该等服务中如何使用您的信息。该特定服务的隐私政策构成本《隐私政策》的" +
+//                "一部分。如相关特定服务的隐私政策与本《隐私政策》有不一致之处，适用该特定服务的隐私政策。"
+//                )
+//    }
      */
-    private fun initProblemAnswer(){
-        commonProblem.add("用户协议")
-        commonProblem.add("隐私政策")
-        commonAnswer.add("用户协议\n" +
-                "\n" +
-                "（以下简称“本公司”）按照下列条款与条件提供信息和产品，您在本协议中亦可被称为“用户”，以下所述条款和条" +
-                "件将构成您与本公司，就您使用提供的内容所达成的全部协议（以下称“本协议”）。")
-        commonAnswer.add("隐私政策的适用范围:\n" +
-                "\n" +
-                "除某些特定服务外，我们所有的服务均适用本《隐私政策》。这些特定服务将适用特定的隐私政策。针对某些特定服务" +
-                "的特定隐私政策，将更具体地说明我们在该等服务中如何使用您的信息。该特定服务的隐私政策构成本《隐私政策》的" +
-                "一部分。如相关特定服务的隐私政策与本《隐私政策》有不一致之处，适用该特定服务的隐私政策。"
-                )
-    }
 }

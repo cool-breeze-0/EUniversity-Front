@@ -7,12 +7,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.example.euniversity.R
+import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.utils.ActivityUtil
+import com.example.euniversity.utils.ResultEnum
+import kotlinx.coroutines.*
+import java.net.SocketTimeoutException
 
 class UserRetrievePasswordFragment : Fragment() {
     private lateinit var userAccountActivity:UserAccountActivity
     private val TAG="UserRetrievePasswordFragment"
+    private val job= Job()
+    private val scope= CoroutineScope(job)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -35,9 +44,56 @@ class UserRetrievePasswordFragment : Fragment() {
                 R.id.getVerificationCodeTextView->{
                     Log.e(TAG,"发送验证码")
                 }
-                //点击完成，根据用户输入的手机号，密码，验证码进行验证，当成功时完成更新密码，失败时给出提示，此部分功能目前未实现
+                //点击完成，根据用户输入的手机号，密码，验证码进行验证，当成功时完成更新密码，失败时给出提示，验证码功能目前未实现
                 R.id.finishButton->{
-                    userAccountActivity.finish()
+                    val phone=view.findViewById<EditText>(R.id.phone).text.toString()
+                    val verificationCode=view.findViewById<EditText>(R.id.verificationCode).text.toString()
+                    val password=view.findViewById<EditText>(R.id.password).text.toString()
+                    val password2=view.findViewById<EditText>(R.id.password2).text.toString()
+                    if (phone.equals("")){
+                        Toast.makeText(userAccountActivity,"手机号不能为空！",Toast.LENGTH_SHORT).show()
+                    }else if(password.equals("")){
+                        Toast.makeText(userAccountActivity,"密码不能为空！",Toast.LENGTH_SHORT).show()
+                    }else if(!password2.equals(password)){
+                        Toast.makeText(userAccountActivity,"两次输入的密码不一致！",Toast.LENGTH_SHORT).show()
+                    }else if (phone.length!=11){
+                        Toast.makeText(userAccountActivity,"请输入正确的手机号！", Toast.LENGTH_SHORT).show()
+                    }else{
+                        scope.launch(Dispatchers.Main) {
+                            try {
+                                val result = EUniversityNetwork.retrievePassword(phone, password)
+                                when (result.code) {
+                                    ResultEnum.INPUT_IS_NULL.code, ResultEnum.USER_NOT_EXIST.code, ResultEnum.RETRIEVE_PASSWORD_FAILD.code -> {
+                                        Toast.makeText(
+                                            userAccountActivity,
+                                            result.msg,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                    ResultEnum.RETRIEVE_PASSWORD_SUCCESS.code -> {
+                                        Toast.makeText(
+                                            userAccountActivity,
+                                            result.msg,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+//                                    delay(2000)
+                                        ActivityUtil.replaceFragment(
+                                            userAccountActivity,
+                                            R.id.userAccountFragment,
+                                            UserLoginFragment(),
+                                            false
+                                        )
+                                    }
+                                }
+                            } catch (e: SocketTimeoutException) {
+                                Toast.makeText(
+                                    userAccountActivity,
+                                    "似乎没有网络，无法连接服务器！",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -45,5 +101,10 @@ class UserRetrievePasswordFragment : Fragment() {
         finishButton.setOnClickListener(onClick)
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }

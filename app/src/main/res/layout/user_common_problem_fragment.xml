@@ -6,43 +6,53 @@
     android:layout_height="match_parent"
     tools:context=".ui.user.UserCommonProblemFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" >
+        app:layout_constraintVertical_bias="0.0">
 
-        <TextView
-            android:id="@+id/commonProblemTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/universal_margin_left_right"
-            android:layout_marginTop="@dimen/universal_margin_left_right"
-            android:layout_marginEnd="@dimen/universal_margin_left_right"
-            android:layout_marginBottom="@dimen/universal_margin_left_right"
-            android:textSize="@dimen/user_common_problem_title_text_size" />
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+            <TextView
+                android:id="@+id/commonProblemTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/universal_margin_left_right"
+                android:layout_marginTop="@dimen/universal_margin_left_right"
+                android:layout_marginEnd="@dimen/universal_margin_left_right"
+                android:layout_marginBottom="@dimen/universal_margin_left_right"
+                android:textSize="@dimen/user_common_problem_title_text_size" />
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="@dimen/universal_margin_left_right"
-            android:layout_marginEnd="@dimen/universal_margin_left_right"
-            android:background="@color/appBackground"
-            />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/universal_margin_left_right"
+                android:layout_marginEnd="@dimen/universal_margin_left_right"
+                android:background="@color/appBackground" />
 
-        <TextView
-            android:id="@+id/commonAnswerTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/universal_margin_left_right"
-            android:layout_marginTop="@dimen/universal_margin_left_right"
-            android:layout_marginEnd="@dimen/universal_margin_left_right"
-            android:layout_marginBottom="@dimen/universal_margin_left_right"
-            android:textSize="@dimen/user_widget_text_size" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/commonAnswerTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/universal_margin_left_right"
+                android:layout_marginTop="@dimen/universal_margin_left_right"
+                android:layout_marginEnd="@dimen/universal_margin_left_right"
+                android:layout_marginBottom="@dimen/universal_margin_left_right"
+                android:textSize="@dimen/user_widget_text_size" />
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

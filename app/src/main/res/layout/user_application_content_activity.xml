@@ -39,7 +39,6 @@
                 android:textSize="@dimen/actionbar_text_size" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
-
     <FrameLayout
         android:id="@+id/userApplicationContentFragment"
         android:layout_width="match_parent"

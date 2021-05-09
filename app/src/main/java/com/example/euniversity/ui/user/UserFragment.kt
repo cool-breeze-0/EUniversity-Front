@@ -1,5 +1,6 @@
 package com.example.euniversity.ui.user
 
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -18,6 +19,8 @@ import com.example.euniversity.MainActivity
 import com.example.euniversity.R
 import com.example.euniversity.adapter.UserItemAdapter
 import com.example.euniversity.entity.UserItem
+import com.example.euniversity.ui.home.HomeFragment
+import com.example.euniversity.utils.ActivityUtil
 import kotlinx.android.synthetic.main.user_account_activity.*
 import kotlinx.android.synthetic.main.user_fragment.*
 import kotlin.concurrent.thread
@@ -42,16 +45,45 @@ class UserFragment : Fragment() {
         val view=inflater.inflate(R.layout.user_fragment, container, false)
         viewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
 
-        //为userFragment中的各个组件设置点击事件
+
         val userProfileNaiveImage:ImageView=view.findViewById(R.id.userProfileNaiveImage)
         val userLoginButton:Button=view.findViewById(R.id.userLoginButton)
         val userLoginRegister:Button=view.findViewById(R.id.userLoginRegister)
+
+        //初始化登录或未登录状态下的图标、按钮文字等
+        val prefs=mainActivity.getSharedPreferences("user",Context.MODE_PRIVATE)
+        val phone=prefs.getString("phone","")
+        if(!phone.equals("")){
+            userProfileNaiveImage.setImageResource(R.drawable.user_profile_login)
+            userLoginButton.text="退出登录"
+            userLoginRegister.text=phone
+        }
+
+        //为userFragment中的各个组件设置点击事件
         val onClick=View.OnClickListener{
             when(it.id){
-                R.id.userLoginButton,R.id.userLoginRegister,R.id.userProfileNaiveImage->{
-                    val intent= Intent(mainActivity, UserAccountActivity::class.java)
-                    intent.putExtra("userAccountFragment","login")
-                    startActivity(intent)
+                //当用户未登录时点击图标或者下面的“登录/注册”文本时会进入登录页面，登录后点击无效
+                R.id.userLoginRegister,R.id.userProfileNaiveImage->{
+                    if(phone.equals("") ){
+                        val intent = Intent(mainActivity, UserAccountActivity::class.java)
+                        intent.putExtra("userAccountFragment", "login")
+                        startActivity(intent)
+                    }
+                }
+                //用户未登录时点击登录按钮进入登录页面，登录后按钮文本为“退出登录”
+                // 点击退出登录并重新加载本页面
+                R.id.userLoginButton->{
+                    if(phone.equals("")){
+                        val intent = Intent(mainActivity, UserAccountActivity::class.java)
+                        intent.putExtra("userAccountFragment", "login")
+                        startActivity(intent)
+                    }else{
+                        //清除文件的用户数据即表示无用户登录
+                        val editor=prefs.edit()
+                        editor.clear()
+                        editor.apply()
+                        ActivityUtil.replaceFragment(mainActivity,R.id.mainFragment, UserFragment(),false)
+                    }
                 }
             }
         }
@@ -69,18 +101,26 @@ class UserFragment : Fragment() {
             userItem1.adapter=adapter
             userItem1.setOnItemClickListener { parent, view, position, id ->
                 when(position){
-                    //点击个人信息跳转到个人信息Activity中
+                    //当用户已登录时，点击个人信息跳转到个人信息Activity中，未登录给出提示
                     0->{
-                        val intent=Intent(mainActivity,UserProfileInformationActivity::class.java)
-                        startActivity(intent)
-                        //设置activity进入方式，从右侧进入
-                        //mainActivity.overridePendingTransition(R.anim.activity_in,R.anim.activity_out)
+                        if(!phone.equals("")) {
+                            val intent=Intent(mainActivity,UserProfileInformationActivity::class.java)
+                            startActivity(intent)
+                            //设置activity进入方式，从右侧进入
+                            //mainActivity.overridePendingTransition(R.anim.activity_in,R.anim.activity_out)
+                        }else{
+                            Toast.makeText(mainActivity,"请登录后再进行操作！",Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    //点击修改密码跳转到用户账户Activity并显示修改密码的碎片
+                    //当用户已登录时，点击修改密码跳转到用户账户Activity并显示修改密码的碎片，未登录给出提示
                     1->{
-                        val intent=Intent(mainActivity,UserAccountActivity::class.java)
-                        intent.putExtra("userAccountFragment","changePassword")
-                        startActivity(intent)
+                        if(!phone.equals("")) {
+                            val intent = Intent(mainActivity, UserAccountActivity::class.java)
+                            intent.putExtra("userAccountFragment", "changePassword")
+                            startActivity(intent)
+                        }else{
+                            Toast.makeText(mainActivity,"请登录后再进行操作！",Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
