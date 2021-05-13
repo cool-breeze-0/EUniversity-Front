@@ -44,10 +44,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/problemAnswerList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/universal_margin_left_right_short"
         android:layout_marginEnd="@dimen/universal_margin_left_right_short"
         android:layout_marginTop="@dimen/universal_margin_left_right_short"
+        android:layout_marginBottom="@dimen/universal_margin_left_right_short"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

@@ -1,8 +1,6 @@
 package com.example.euniversity.network.service
 
-import com.example.euniversity.network.response.Problem
-import com.example.euniversity.network.response.ProblemAnswer
-import com.example.euniversity.network.response.Response
+import com.example.euniversity.network.response.*
 
 import retrofit2.Call
 import retrofit2.http.GET
@@ -19,4 +17,72 @@ interface CommunityService {
         @Query("time") time:String,
         @Query("userPhone") userPhone:String
     ):Call<Response<Problem>>
+
+    @GET("community/myProblem")
+    fun myProblem(
+        @Query("userPhone") userPhone:String
+    ):Call<Response<ProblemAnswer>>
+
+    @GET("community/myAnswer")
+    fun myAnswer(
+        @Query("userPhone") userPhone:String
+    ):Call<Response<ProblemAnswer>>
+
+    @GET("community/commonProblem")
+    fun commonProblem(): Call<Response<ProblemAnswer>>
+
+    @GET("community/qualitySortProblem")
+    fun qualitySortProblem(): Call<Response<ProblemAnswer>>
+
+    @GET("community/comprehensiveSortProblem")
+    fun comprehensiveSortProblem(): Call<Response<ProblemAnswer>>
+
+    @GET("community/searchProblem")
+    fun searchProblem(
+        @Query("text") text:String
+    ): Call<Response<ProblemAnswer>>
+
+    @GET("community/isliked")
+    fun isliked(
+        @Query("userPhone") userPhone: String,
+        @Query("answerId") answerId: Int
+    ): Call<Response<Like>>
+
+    @GET("community/changeToLiked")
+    fun changeToLiked(
+        @Query("userPhone") userPhone: String,
+        @Query("answerId") answerId: Int
+    ): Call<Response<Like>>
+
+    @GET("community/changeToUnliked")
+    fun changeToUnliked(
+        @Query("userPhone") userPhone: String,
+        @Query("answerId") answerId: Int
+    ): Call<Response<Like>>
+
+    @GET("community/updateAnswerLikes")
+    fun updateAnswerLikes(
+        @Query("answerId") answerId: Int,
+        @Query("likes") likes:Int
+    ): Call<Response<Like>>
+
+    @GET("community/findProblemById")
+    fun findProblemById(
+        @Query("problemId") problemId:Int
+    ):Call<Response<ProblemAnswer>>
+
+    @POST("community/answerProblem")
+    fun answerProblem(
+        @Query("content") content:String,
+        @Query("time") time:String,
+        @Query("userPhone") userPhone:String,
+        @Query("problemId") problemId: Int
+    ):Call<Response<Answer>>
+
+    @POST("community/updateAnswer")
+    fun updateAnswer(
+        @Query("answerId") answerId:Int,
+        @Query("content") content:String,
+        @Query("time") time:String
+    ):Call<Response<Answer>>
 }

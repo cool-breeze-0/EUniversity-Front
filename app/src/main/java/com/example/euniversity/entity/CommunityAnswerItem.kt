@@ -6,4 +6,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class CommunityAnswerItem(val answerProblemPersonNickname:String,val answerProblemPersonIdentity:String,
-                          val answerProblemTime:String,val answerContent:String,val likeImage:Int,val likeQuantity:Int):Parcelable
+                          val answerProblemTime:String,val answerContent:String,val likeImage:Int,val likeQuantity:Int,
+                               val answerId:Int):Parcelable

@@ -40,7 +40,7 @@ class CommunityAnswerAdapter(val communityAnswerList: List<CommunityAnswerItem>,
             parent.context.startActivity(intent)
             //在进入回答详情时清除问题详情活动，这样在从回答详情重新进入问题详情活动（重新从数据库中获取数据进行加载更新点赞）时
             // 活动栈中只有一个问题详情活动
-            activity.finish()
+//            activity.finish()
         }
         //点击recycleView的每一个整体的选项都会触发响应事件进入回答详情页面
         //设置不看回答详情不能点赞，此处不能点赞只能看到点赞量，点击点赞图标也会跳转到回答详情页面
@@ -62,7 +62,9 @@ class CommunityAnswerAdapter(val communityAnswerList: List<CommunityAnswerItem>,
         // 使用从数据库中查询出来的回答的全部内容作为answerContent，但是本适配器只获取前一部分展示，详情在回答详情中展示
         //可以避免进入回答详情页面时再次进行数据库查询操作
         //此处尚未实现，用全部内容适配到列表中
-        holder.answerContent.text=communityAnswerItem.answerContent
+        holder.answerContent.text=
+            if (communityAnswerItem.answerContent.length>35) communityAnswerItem.answerContent.substring(0,35)+"..."
+            else communityAnswerItem.answerContent
 
         holder.likeImage.setImageResource(communityAnswerItem.likeImage)
         holder.likeQuantity.text=communityAnswerItem.likeQuantity.toString()

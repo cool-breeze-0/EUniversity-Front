@@ -1,19 +1,35 @@
 package com.example.euniversity.ui.community
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.euniversity.R
 import com.example.euniversity.entity.CommunityAnswerItem
+import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.ui.user.UserProfileInformationActivity
+import com.example.euniversity.utils.ResultEnum
 import kotlinx.android.synthetic.main.community_answer_details_activity.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 
 class CommunityAnswerDetailsActivity : AppCompatActivity() {
+    private val job= Job()
+    private val scope= CoroutineScope(job)
     var likeImageId=0
+    var answerId=0
+    private lateinit var context: CommunityAnswerDetailsActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.community_answer_details_activity)
+
+        context=this
 
         //getParcelableExtra生成数据类型为Parcelable？类型，因为知道传过来的就是CommunityAnswerItem类型
         //因此转化为CommunityAnswerItem类型，这样才能调用里面的属性
@@ -26,6 +42,7 @@ class CommunityAnswerDetailsActivity : AppCompatActivity() {
         answerContent.text=communityAnswerItem.answerContent
         likeImage.setImageResource(communityAnswerItem.likeImage)
         likeQuantity.text=communityAnswerItem.likeQuantity.toString()
+        answerId=communityAnswerItem.answerId
 
         likeImageId=communityAnswerItem.likeImage
     }
@@ -50,15 +67,104 @@ class CommunityAnswerDetailsActivity : AppCompatActivity() {
             //最后更新数据库中的数据，更改回答对用户的like属性（true改false，false改true）和点赞量，此部分数据库功能尚未实现，暂未进行
             R.id.likeImage->{
                 if(likeImageId==R.drawable.community_problem_details_like_unchecked) {
-                    likeImage.setImageResource(R.drawable.community_problem_details_like_checked)
-                    likeImageId=R.drawable.community_problem_details_like_checked
-                    likeQuantity.text=(likeQuantity.text.toString().toInt() + 1 ).toString()
+                    val prefs=this.getSharedPreferences("user", Context.MODE_PRIVATE)
+                    val phone=prefs.getString("phone","")
+                    if(!phone.equals("")) {
+                        scope.launch(Dispatchers.Main) {
+                            try {
+                                val result = EUniversityNetwork.changeToLiked(phone!!, answerId)
+                                when (result.code) {
+                                    ResultEnum.INPUT_IS_NULL.code -> {
+                                        Toast.makeText(context, "请登录后再进行操作!", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    ResultEnum.ADD_LIKE_FAILD.code -> {
+                                        Toast.makeText(context, result.msg, Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    ResultEnum.ADD_LIKE_SUCCESS.code -> {
+                                        val likes = likeQuantity.text.toString().toInt() + 1
+                                        val updateResult =
+                                            EUniversityNetwork.updateAnswerLikes(answerId, likes)
+                                        when (updateResult.code) {
+                                            ResultEnum.UPDATE_ANSWER_LIKES_FAILD.code -> {
+                                                Toast.makeText(
+                                                    context,
+                                                    result.msg,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            ResultEnum.UPDATE_ANSWER_LIKES_SUCCESS.code -> {
+                                                likeImage.setImageResource(R.drawable.community_problem_details_like_checked)
+                                                likeImageId =
+                                                    R.drawable.community_problem_details_like_checked
+                                                likeQuantity.text = (likeQuantity.text.toString()
+                                                    .toInt() + 1).toString()
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (e: SocketTimeoutException) {
+                                Toast.makeText(context, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(this,"请登录后再进行操作！", Toast.LENGTH_SHORT).show()
+                    }
                 }else{
-                    likeImage.setImageResource(R.drawable.community_problem_details_like_unchecked)
-                    likeImageId=R.drawable.community_problem_details_like_unchecked
-                    likeQuantity.text=(likeQuantity.text.toString().toInt() - 1 ).toString()
+                    val prefs=this.getSharedPreferences("user", Context.MODE_PRIVATE)
+                    val phone=prefs.getString("phone","")
+                    if(!phone.equals("")) {
+                        scope.launch(Dispatchers.Main) {
+                            try {
+                                val result = EUniversityNetwork.changeToUnliked(phone!!, answerId)
+                                when (result.code) {
+                                    ResultEnum.INPUT_IS_NULL.code -> {
+                                        Toast.makeText(context, "请登录后再进行操作!", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    ResultEnum.DEL_LIKE_FAILD.code -> {
+                                        Toast.makeText(context, result.msg, Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    ResultEnum.DEL_LIKE_SUCCESS.code -> {
+                                        val likes = likeQuantity.text.toString().toInt() - 1
+                                        val updateResult =
+                                            EUniversityNetwork.updateAnswerLikes(answerId, likes)
+                                        when (updateResult.code) {
+                                            ResultEnum.UPDATE_ANSWER_LIKES_FAILD.code -> {
+                                                Toast.makeText(
+                                                    context,
+                                                    result.msg,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            ResultEnum.UPDATE_ANSWER_LIKES_SUCCESS.code -> {
+                                                likeImage.setImageResource(R.drawable.community_problem_details_like_unchecked)
+                                                likeImageId =
+                                                    R.drawable.community_problem_details_like_unchecked
+                                                likeQuantity.text = (likeQuantity.text.toString()
+                                                    .toInt() - 1).toString()
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (e: SocketTimeoutException) {
+                                Toast.makeText(context, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(this,"请登录后再进行操作！", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }

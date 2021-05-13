@@ -44,6 +44,45 @@ object EUniversityNetwork {
     suspend fun askProblem(content:String,time: String,userPhone:String)=
         communityService.askProblem(content, time, userPhone).await()
 
+    suspend fun myProblem(userPhone:String)=
+        communityService.myProblem(userPhone).await()
+
+    suspend fun myAnswer(userPhone: String)=
+        communityService.myAnswer(userPhone).await()
+
+    suspend fun commonProblem()=
+        communityService.commonProblem().await()
+
+    suspend fun qualitySortProblem()=
+        communityService.qualitySortProblem().await()
+
+    suspend fun comprehensiveSortProblem()=
+        communityService.comprehensiveSortProblem().await()
+
+    suspend fun searchProblem(text:String)=
+        communityService.searchProblem(text).await()
+
+    suspend fun isliked(userPhone: String,answerId:Int)=
+        communityService.isliked(userPhone, answerId).await()
+
+    suspend fun changeToLiked(userPhone: String,answerId:Int)=
+        communityService.changeToLiked(userPhone, answerId).await()
+
+    suspend fun changeToUnliked(userPhone: String,answerId:Int)=
+        communityService.changeToUnliked(userPhone, answerId).await()
+
+    suspend fun updateAnswerLikes(answerId: Int,likes:Int)=
+        communityService.updateAnswerLikes(answerId, likes).await()
+
+    suspend fun findProblemById(problemId:Int)=
+        communityService.findProblemById(problemId).await()
+
+    suspend fun answerProblem(content:String,time:String,userPhone:String,problemId: Int)=
+        communityService.answerProblem(content, time, userPhone, problemId).await()
+
+    suspend fun updateAnswer(answerId: Int,content:String,time:String)=
+        communityService.updateAnswer(answerId,content,time).await()
+
     private suspend fun <T> Call<T>.await():T{
         return suspendCoroutine {continuation ->
             enqueue(object :Callback<T>{
@@ -59,7 +98,6 @@ object EUniversityNetwork {
                         continuation.resumeWithException(RuntimeException("response body is null"))
                     }
                 }
-
             })
         }
     }

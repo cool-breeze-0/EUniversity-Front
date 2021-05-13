@@ -19,6 +19,8 @@ import com.example.euniversity.adapter.CommunityProblemAnserAdapter
 import com.example.euniversity.adapter.ImageAdapter
 import com.example.euniversity.entity.CommunityProblemAnswerItem
 import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.network.response.ProblemAnswer
+import com.example.euniversity.network.response.Response
 import com.example.euniversity.utils.ResultEnum
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
@@ -68,7 +70,7 @@ class CommunityFragment : Fragment() {
         communityViewModel.problemAnswerList.observe(viewLifecycleOwner, Observer {
             val communityProblemAnwerList=view.findViewById<RecyclerView>(R.id.communityProblemAnswerList)
             Log.e(TAG,"observe event")
-            val recyclerAdapter=CommunityProblemAnserAdapter(it)
+            val recyclerAdapter=CommunityProblemAnserAdapter(it,communityViewModel.problemIdList.value!!)
             communityProblemAnwerList.layoutManager = LinearLayoutManager(mainActivity)
             communityProblemAnwerList.adapter=recyclerAdapter
             recyclerAdapter.notifyDataSetChanged()
@@ -92,21 +94,32 @@ class CommunityFragment : Fragment() {
                 //List<CommunityProblemAnswerItem>为ArrayList<CommunityProblemAnswerItem>
                 //必须注意从findGroupResult返回的数据类型为ArrayList<CommunityProblemAnswerItem>？（是List<CommunityProblemAnswerItem>？的子类）
                 R.id.myProblemImage-> {
-                    val prefs=getSharedPreferences("user", Context.MODE_PRIVATE)
+                    val prefs=mainActivity.getSharedPreferences("user", Context.MODE_PRIVATE)
                     val phone=prefs.getString("phone","")
                     if(!phone.equals("")) {
                         scope.launch(Dispatchers.Main) {
                             try {
-                                val problemAnswerList = ArrayList<CommunityProblemAnswerItem>()
-                                val result = EUniversityNetwork.when (result.code) {
-                                    ResultEnum.NO_PROBLEMS_IN_DATABASE.code -> {
-                                        Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT)
-                                            .show()
+                                var problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
+                                var problemIdList=ArrayList<Int>();
+                                val result = EUniversityNetwork.myProblem(phone!!)
+                                when (result.code) {
+                                    ResultEnum.INPUT_IS_NULL.code -> {
+                                        Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
+                                    }
+                                    ResultEnum.USER_PROBLEM_NOT_EXIST.code->{
+                                        Toast.makeText(mainActivity, "您还没有提过问题", Toast.LENGTH_SHORT).show()
                                     }
                                     ResultEnum.FIND_SUCCESS.code -> {
-
+                                        problemIdList=upsideDownData(result.data)
+                                        problemAnswerList=resultToProblemAnser(result)
                                     }
                                 }
+                                val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
+                                intent.putExtra("groupItem","我的提问")
+                                intent.putParcelableArrayListExtra("communityProblemAnswer",
+                                    problemAnswerList)
+                                intent.putIntegerArrayListExtra("problemIdList",problemIdList)
+                                startActivity(intent)
                             } catch (e: SocketTimeoutException) {
                                 Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
                                     .show()
@@ -115,25 +128,71 @@ class CommunityFragment : Fragment() {
                     }else{
                         Toast.makeText(context,"请登录后再进行操作！",Toast.LENGTH_SHORT).show()
                     }
-                    val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
-                    intent.putExtra("groupItem","我的提问")
-                    intent.putParcelableArrayListExtra("communityProblemAnswer",
-                        findGroupResult("myProblem") as ArrayList<CommunityProblemAnswerItem>)
-                    startActivity(intent)
                 }
                 R.id.myAnswerImage->{
-                    val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
-                    intent.putExtra("groupItem","我的回答")
-                    intent.putParcelableArrayListExtra("communityProblemAnswer",
-                        findGroupResult("myAnswer") as ArrayList<CommunityProblemAnswerItem>)
-                    startActivity(intent)
+                    val prefs=mainActivity.getSharedPreferences("user", Context.MODE_PRIVATE)
+                    val phone=prefs.getString("phone","")
+                    if(!phone.equals("")) {
+                        scope.launch(Dispatchers.Main) {
+                            try {
+                                var problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
+                                var problemIdList=ArrayList<Int>();
+                                val result = EUniversityNetwork.myAnswer(phone!!)
+                                when (result.code) {
+                                    ResultEnum.INPUT_IS_NULL.code -> {
+                                        Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
+                                    }
+                                    ResultEnum.USER_ANSWER_NOT_EXIST.code->{
+                                        Toast.makeText(mainActivity, "您还没有回答问题", Toast.LENGTH_SHORT).show()
+                                    }
+                                    ResultEnum.FIND_SUCCESS.code -> {
+                                        problemIdList=upsideDownData(result.data)
+                                        problemAnswerList=resultToProblemAnser(result)
+                                    }
+                                }
+                                val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
+                                intent.putExtra("groupItem","我的回答")
+                                intent.putParcelableArrayListExtra("communityProblemAnswer",
+                                    problemAnswerList)
+                                intent.putIntegerArrayListExtra("problemIdList",problemIdList)
+                                startActivity(intent)
+                            } catch (e: SocketTimeoutException) {
+                                Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(context,"请登录后再进行操作！",Toast.LENGTH_SHORT).show()
+                    }
+
                 }
                 R.id.commonProblemImage->{
-                    val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
-                    intent.putExtra("groupItem","常见问题")
-                    intent.putParcelableArrayListExtra("communityProblemAnswer",
-                        findGroupResult("commonProblem") as ArrayList<CommunityProblemAnswerItem>)
-                    startActivity(intent)
+                    scope.launch(Dispatchers.Main) {
+                        try {
+                            var problemAnswerList = ArrayList<CommunityProblemAnswerItem>()
+                            var problemIdList=ArrayList<Int>();
+                            val result = EUniversityNetwork.commonProblem()
+                            when (result.code) {
+                                ResultEnum.NO_PROBLEMS_IN_DATABASE.code -> {
+                                    Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
+                                }
+                                ResultEnum.FIND_SUCCESS.code -> {
+                                    problemIdList=upsideDownData(result.data)
+                                    problemAnswerList = resultToProblemAnser(result)
+                                }
+                            }
+                            val intent=Intent(mainActivity,CommunityGroupActivity::class.java)
+                            intent.putExtra("groupItem","常见问题")
+                            intent.putParcelableArrayListExtra("communityProblemAnswer",
+                                problemAnswerList)
+                            intent.putIntegerArrayListExtra("problemIdList",problemIdList)
+                            startActivity(intent)
+                        } catch (e: SocketTimeoutException) {
+                            Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
                 }
                 //根据搜索文本框中用户输入的文本在数据库中查询相应的问题项
                 R.id.searchImage->{
@@ -145,9 +204,15 @@ class CommunityFragment : Fragment() {
                 }
                 //点击我要提问按钮进入提问活动页面，并将处理问题类型发送给activity
                 R.id.askButton->{
-                    val intent=Intent(mainActivity,CommunityAskOrAnswerActivity::class.java)
-                    intent.putExtra("opreateProblemType","ask")
-                    mainActivity.startActivity(intent)
+                    val prefs=mainActivity.getSharedPreferences("user", Context.MODE_PRIVATE)
+                    val phone=prefs.getString("phone","")
+                    if(!phone.equals("")) {
+                        val intent=Intent(mainActivity,CommunityAskOrAnswerActivity::class.java)
+                        intent.putExtra("opreateProblemType","ask")
+                        mainActivity.startActivity(intent)
+                    }else{
+                        Toast.makeText(context,"请登录后再进行操作！",Toast.LENGTH_SHORT).show()
+                    }
                 }
                 //点击回到顶部图标时,回到整个碎片顶部并设置recyclerView列表回到第0个的位置
                 R.id.backToTopImage->{
@@ -212,6 +277,17 @@ class CommunityFragment : Fragment() {
     }
 
     /**
+     * 倒置数据库中传来的问题列表数据，与recyclerView同步，便于数据操作
+     */
+    fun upsideDownData(data:List<ProblemAnswer>):ArrayList<Int> {
+        val newData = ArrayList<Int>();
+        for(i in 1..data.size){
+            newData.add(data[data.size-i].problem.id)
+        }
+        return newData
+    }
+
+    /**
      * 初始化问题项列表，从数据库中获取问题及回答
      */
     private fun initProblemAnswerList(){
@@ -219,30 +295,14 @@ class CommunityFragment : Fragment() {
 //        "2020.12.5提问","答：  同学你好！\n" + "高考是人生的一件大事，这是毫无疑...","2021.1.15回答"))
         scope.launch(Dispatchers.Main){
             try {
-                val problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
                 val result = EUniversityNetwork.findAllProblemAnswer();
                 when(result.code){
                     ResultEnum.NO_PROBLEMS_IN_DATABASE.code->{
                         Toast.makeText(mainActivity,result.msg,Toast.LENGTH_SHORT).show()
                     }
                     ResultEnum.FIND_SUCCESS.code->{
-                        for(i in 1 .. result.data.size ){
-                            val problem=result.data[result.data.size-i].problem
-                            val answers=result.data[result.data.size-i].answers
-                            val problemTime=problem.time.substring(0,10)
-                            val problemContent=
-                                if(problem.content.length>35) problem.content.substring(0,35)+"..." else problem.content
-                            if(answers.size>0) {
-                                val answerTime=answers[0].time.substring(0,10)
-                                val answerContent=
-                                    if (answers[0].content.length>35) answers[0].content.substring(0,35)+"..." else answers[0].content
-                                problemAnswerList.add(CommunityProblemAnswerItem(
-                                    problemContent,"提问于"+problemTime,answerContent,"回答于"+answerTime))
-                            }else{
-                                problemAnswerList.add(CommunityProblemAnswerItem(
-                                    problemContent,"提问于"+problemTime,"暂无回答",""))
-                            }
-                        }
+                        val problemAnswerList=resultToProblemAnser(result)
+                        communityViewModel.problemIdList.postValue(upsideDownData(result.data))
                         communityViewModel.problemAnswerList.postValue(problemAnswerList)
                     }
                 }
@@ -254,11 +314,39 @@ class CommunityFragment : Fragment() {
     }
 
     /**
+     * 根据接收到的问题及回答result，将其中从数据库中查询出的数据转化成ProblemAnswer适配器所需要的内容
+     * 将问题逆序显示，这样就可实现默认时间排序，最后提问的显示在最前面（数据库提问时间越早越在前面）
+     */
+    fun resultToProblemAnser(result:Response<ProblemAnswer>):ArrayList<CommunityProblemAnswerItem>{
+        val problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
+        for(i in 1 .. result.data.size ){
+            val problem=result.data[result.data.size-i].problem
+            val answers=result.data[result.data.size-i].answers
+            val problemTime=problem.time.substring(0,10)
+            val problemContent=
+                if(problem.content.length>35) problem.content.substring(0,35)+"..." else problem.content
+            if(answers.size>0) {
+                val new=answers.size-1
+                val answerTime=answers[new].time.substring(0,10)
+                val answerContent=
+                    if (answers[new].content.length>35) answers[new].content.substring(0,35)+"..." else answers[new].content
+                problemAnswerList.add(CommunityProblemAnswerItem(
+                    problemContent,"提问于"+problemTime,answerContent,"回答于"+answerTime))
+            }else{
+                problemAnswerList.add(CommunityProblemAnswerItem(
+                    problemContent,"提问于"+problemTime,"暂无回答",""))
+            }
+        }
+        return problemAnswerList;
+    }
+
+    /**
      * 根据所选的groupItem在数据库中查询相应的问题项返回，此功能尚未实现，直接返回所有的问题项
      */
+    /*
     private fun findGroupResult(groupItem:String):List<CommunityProblemAnswerItem>?{
         return communityViewModel.problemAnswerList.value
-    }
+    }*/
 
     /**
      * 根据搜索文本框中用户输入的文本在数据库中查询相应的问题项，并修改viewModel中的problemAnswerList
@@ -266,25 +354,78 @@ class CommunityFragment : Fragment() {
      * 此部分数据库查询功能尚未实现，直接添加一个问题项作为结果（事实上查询结果只会更少，此处仅供测试使用）
      */
     private fun findSearchResult(text:String){
-        val problemAnswerList=communityViewModel.problemAnswerList.value as ArrayList<CommunityProblemAnswerItem>
+        /*val problemAnswerList=communityViewModel.problemAnswerList.value as ArrayList<CommunityProblemAnswerItem>
         problemAnswerList.add(CommunityProblemAnswerItem("问：  分数估了430，没发挥好，最擅长英语，但考试也失利了，想学英语专业...",
             "2020.12.5提问","答：  同学你好！\n" + "高考是人生的一件大事，这是毫无疑...","2021.1.15回答"))
         thread{
             communityViewModel.problemAnswerList.postValue(problemAnswerList)
+        }*/
+        if(text.equals("")){
+            Toast.makeText(mainActivity,"请在搜索框输入内容！",Toast.LENGTH_SHORT).show()
+        }else {
+            scope.launch(Dispatchers.Main) {
+                try {
+                    var problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
+                    val result = EUniversityNetwork.searchProblem(text);
+                    when (result.code) {
+                        ResultEnum.INPUT_IS_NULL.code -> {
+                            Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
+                        }
+                        ResultEnum.FIND_PROBLEM_FAILE.code -> {
+                            Toast.makeText(mainActivity, "抱歉，没有匹配到问题", Toast.LENGTH_SHORT).show()
+                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                            communityViewModel.problemAnswerList.postValue(problemAnswerList)
+                        }
+                        ResultEnum.FIND_SUCCESS.code -> {
+                            problemAnswerList= resultToProblemAnser(result)
+                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                            communityViewModel.problemAnswerList.postValue(problemAnswerList)
+                        }
+                    }
+
+                } catch (e: SocketTimeoutException) {
+                    Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
     /**
-     * 根据用户选择的排序方法菜单项将查询的问题项进行排序（可以用数据库查询方法排序），并修改viewModel中的problemAnswerList
+     * 根据用户选择的排序方法菜单项将查询的问题项进行排序，并修改viewModel中的problemAnswerList
      * 观察者观察到viewModel中的problemAnswerList内容变化后会自动在活动中将新的problemAnswerList内容加载到recycleView中
-     * 此部分数据库查询排序功能尚未实现，直接添加一个问题项作为结果（事实上查询结果不变，此处仅供测试使用）
      */
     private fun findSortResult(text: String){
-        val problemAnswerList=communityViewModel.problemAnswerList.value as ArrayList<CommunityProblemAnswerItem>
+        /*val problemAnswerList=communityViewModel.problemAnswerList.value as ArrayList<CommunityProblemAnswerItem>
         problemAnswerList.add(CommunityProblemAnswerItem("问：  分数估了430，没发挥好，最擅长英语，但考试也失利了，想学英语专业...",
             "2020.12.5提问","答：  同学你好！\n" + "高考是人生的一件大事，这是毫无疑...","2021.1.15回答"))
         thread{
             communityViewModel.problemAnswerList.postValue(problemAnswerList)
+        }*/
+        if(text.equals("timeSort")){
+            initProblemAnswerList()
+        }else{
+            scope.launch(Dispatchers.Main){
+                try {
+                    val result:Response<ProblemAnswer>;
+                    if(text.equals("qualitySort"))
+                        result= EUniversityNetwork.qualitySortProblem()
+                    else
+                        result = EUniversityNetwork.comprehensiveSortProblem()
+                    when(result.code){
+                        ResultEnum.NO_PROBLEMS_IN_DATABASE.code->{
+                            Toast.makeText(mainActivity,result.msg,Toast.LENGTH_SHORT).show()
+                        }
+                        ResultEnum.FIND_SUCCESS.code->{
+                            val problemAnswerList=resultToProblemAnser(result)
+                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                            communityViewModel.problemAnswerList.postValue(problemAnswerList)
+                        }
+                    }
+
+                }catch (e: SocketTimeoutException){
+                    Toast.makeText(mainActivity,"似乎没有网络，无法连接服务器！",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

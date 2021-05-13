@@ -57,7 +57,7 @@
     <string name="community_problem_answer_item_view_all_answer">查看所有回答</string>
     <string name="community_menu_comprehensive_sort">综合排序</string>
     <string name="community_menu_quality_sort">按质量排序</string>
-    <string name="community_menu_time_sort">按时间排序</string>
+    <string name="community_menu_time_sort">按时间排序(默认)</string>
     <string name="community_toolbar_title_problem_details">问题详情</string>
     <string name="community_problem_details_answer_problem">我来回答</string>
     <string name="community_toolbar_title_answer_details">回答详情</string>

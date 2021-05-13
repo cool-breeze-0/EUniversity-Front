@@ -22,7 +22,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         configButtomNavigation()
-        ActivityUtil.replaceFragment(this,R.id.mainFragment,HomeFragment(),false)
+        val fragment=intent.getStringExtra("fragment")
+        if(fragment==null) {
+            ActivityUtil.replaceFragment(this, R.id.mainFragment, HomeFragment(), false)
+        }else if(fragment.equals("communityFragment")){
+            ActivityUtil.replaceFragment(this, R.id.mainFragment, CommunityFragment(), false)
+        }
     }
 
     /**
