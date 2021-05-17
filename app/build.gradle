@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.euniversity"
-        minSdkVersion 26
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -53,4 +53,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
 }

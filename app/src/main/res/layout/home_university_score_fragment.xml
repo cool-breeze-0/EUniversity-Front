@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".ui.home.HomeUniversityScoreFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:text="@string/home_university_score_prompt"
+            android:textSize="@dimen/home_university_score_text_size" />
+        <TextView
+            android:id="@+id/province"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:textSize="@dimen/home_university_score_text_size" />
+
+        <ImageView
+            android:id="@+id/provinceIcon"
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/home_university_score_icon_size"
+            android:layout_height="@dimen/home_university_score_icon_size"
+            app:srcCompat="@drawable/icon_arrow_down" />
+        <TextView
+            android:id="@+id/division"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:textSize="@dimen/home_university_score_text_size" />
+
+        <ImageView
+            android:id="@+id/divisionIcon"
+            android:layout_gravity="center_vertical"
+            android:layout_width="@dimen/home_university_score_icon_size"
+            android:layout_height="@dimen/home_university_score_icon_size"
+            app:srcCompat="@drawable/icon_arrow_down" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"/>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/appBackground" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:text="@string/home_university_score_year"
+            android:textSize="@dimen/home_university_score_text_size" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_recruit_type"
+            android:textSize="@dimen/home_university_score_text_size" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_min_score"
+            android:textSize="@dimen/home_university_score_text_size" />
+    </LinearLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/appBackground"
+        android:layout_marginStart="@dimen/universal_margin_left_right_short"
+        android:layout_marginEnd="@dimen/universal_margin_left_right_short"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_year0"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_recruit_type_detail"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:id="@+id/grade1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+    </LinearLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/appBackground"
+        android:layout_marginStart="@dimen/universal_margin_left_right_short"
+        android:layout_marginEnd="@dimen/universal_margin_left_right_short"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_year1"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_recruit_type_detail"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:id="@+id/grade2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+    </LinearLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/appBackground"
+        android:layout_marginStart="@dimen/universal_margin_left_right_short"
+        android:layout_marginEnd="@dimen/universal_margin_left_right_short"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_year2"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/home_university_score_recruit_type_detail"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+
+        <TextView
+            android:id="@+id/grade3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/universal_margin_left_right_short"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/home_university_score_content_text_size" />
+    </LinearLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/appBackground"
+        android:layout_marginStart="@dimen/universal_margin_left_right_short"
+        android:layout_marginEnd="@dimen/universal_margin_left_right_short"/>
+</LinearLayout>

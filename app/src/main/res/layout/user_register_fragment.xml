@@ -27,6 +27,7 @@
         android:layout_marginTop="@dimen/user_input_view_top_to_title"
         android:layout_marginEnd="@dimen/user_account_margin_left_right"
         android:ems="10"
+        android:inputType="number"
         android:hint="@string/user_account_hint_input_phone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
             android:hint="@string/user_account_hint_input_verification_code" />
 
         <TextView
@@ -126,7 +128,7 @@
         android:layout_marginTop="@dimen/user_input_view_to_input_view"
         android:layout_marginStart="@dimen/user_account_margin_left_right">
         <CheckBox
-            android:id="@+id/checkBox"
+            android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user_account_protocol1"/>

@@ -50,10 +50,14 @@
     <dimen name="home_icon_size">32dp</dimen>
     <dimen name="home_search_input_text_size">24sp</dimen>
     <dimen name="home_university_icon_size">50dp</dimen>
-    <dimen name="home_university_name_text_size">24sp</dimen>
+    <dimen name="home_university_name_text_size">20sp</dimen>
     <dimen name="home_filter_checkbox_radius">5dp</dimen>
     <dimen name="home_filter_title_text_size">20sp</dimen>
     <dimen name="home_filter_cancel_text_size">16sp</dimen>
     <dimen name="home_filter_type_title_text_size">16sp</dimen>
     <dimen name="home_button_text_size">16sp</dimen>
+    <dimen name="home_university_details_choice_text_size">18sp</dimen>
+    <dimen name="home_university_score_text_size">18sp</dimen>
+    <dimen name="home_university_score_icon_size">18dp</dimen>
+    <dimen name="home_university_score_content_text_size">16sp</dimen>
 </resources>

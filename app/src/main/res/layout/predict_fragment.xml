@@ -94,7 +94,7 @@
                     android:text="@string/predict_admission_division" />
 
                 <TextView
-                    android:id="@+id/predictAdmissionDivisionInput"
+                    android:id="@+id/admissionDivisionInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/universal_margin_left_right"
@@ -118,7 +118,7 @@
                     android:text="@string/predict_birthplace" />
 
                 <TextView
-                    android:id="@+id/predictBirthplaceInput"
+                    android:id="@+id/provinceInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/universal_margin_left_right"
@@ -142,13 +142,14 @@
                     android:text="@string/predict_favorite_college" />
 
                 <EditText
-                    android:id="@+id/textView4"
+                    android:id="@+id/universityInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/universal_margin_left_right"
                     android:layout_marginEnd="@dimen/universal_margin_left_right"
                     android:layout_marginBottom="@dimen/universal_margin_left_right_short"
                     android:background="@drawable/shape_cornors_gray"
+                    android:hint="@string/predict_hint_university_text"
                     android:paddingStart="@dimen/predict_input_textview_padding"
                     android:paddingTop="@dimen/predict_input_textview_padding"
                     android:paddingEnd="@dimen/predict_input_textview_padding"
@@ -166,13 +167,15 @@
                     android:text="@string/predict_estimated_score" />
 
                 <EditText
-                    android:id="@+id/textView6"
+                    android:id="@+id/scoreInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/universal_margin_left_right"
                     android:layout_marginEnd="@dimen/universal_margin_left_right"
                     android:layout_marginBottom="@dimen/universal_margin_left_right_short"
                     android:background="@drawable/shape_cornors_gray"
+                    android:hint="@string/predict_hint_score"
+                    android:inputType="number"
                     android:paddingStart="@dimen/predict_input_textview_padding"
                     android:paddingTop="@dimen/predict_input_textview_padding"
                     android:paddingEnd="@dimen/predict_input_textview_padding"

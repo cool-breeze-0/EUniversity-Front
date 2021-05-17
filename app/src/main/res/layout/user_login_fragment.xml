@@ -30,6 +30,7 @@
         android:layout_marginTop="@dimen/user_input_view_top_to_title"
         android:layout_marginStart="@dimen/user_account_margin_left_right"
         android:layout_marginEnd="@dimen/user_account_margin_left_right"
+        android:inputType="number"
         android:ems="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

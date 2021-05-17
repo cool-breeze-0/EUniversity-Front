@@ -10,7 +10,9 @@ import java.time.LocalDateTime
 
 interface CommunityService {
     @GET("community/findAllProblemAnswer")
-    fun findAllProblemAnswer(): Call<Response<ProblemAnswer>>
+    fun findAllProblemAnswer(
+        @Query("time") time:Int
+    ): Call<Response<ProblemAnswer>>
     @POST("community/askProblem")
     fun askProblem(
         @Query("content") content:String,
@@ -32,14 +34,19 @@ interface CommunityService {
     fun commonProblem(): Call<Response<ProblemAnswer>>
 
     @GET("community/qualitySortProblem")
-    fun qualitySortProblem(): Call<Response<ProblemAnswer>>
+    fun qualitySortProblem(
+        @Query("time") time:Int
+    ): Call<Response<ProblemAnswer>>
 
     @GET("community/comprehensiveSortProblem")
-    fun comprehensiveSortProblem(): Call<Response<ProblemAnswer>>
+    fun comprehensiveSortProblem(
+        @Query("time") time:Int
+    ): Call<Response<ProblemAnswer>>
 
     @GET("community/searchProblem")
     fun searchProblem(
-        @Query("text") text:String
+        @Query("text") text:String,
+        @Query("time") time:Int
     ): Call<Response<ProblemAnswer>>
 
     @GET("community/isliked")

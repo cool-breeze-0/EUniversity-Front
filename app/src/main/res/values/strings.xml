@@ -72,6 +72,8 @@
     <string name="reset">重置</string>
     <string name="determine">确定</string>
     <string name="home_toolbar_title_university_details">院校详情</string>
+    <string name="home_university_details_introduction">学校概况</string>
+    <string name="home_university_details_score">招录数据</string>
 
 
     <string-array name="communityBannerImage">
@@ -577,4 +579,16 @@
         <item>本应用的预估是通过收集近几年的各个高校的录取分数线，使用大数据加人工智能算法进行预测从而进一步估计用户的预估分数能够
             高于录取分数的概率即用户考入心仪院校的概率</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_university_score_prompt">各省分数线</string>
+    <string name="home_university_score_year">年份</string>
+    <string name="home_university_score_recruit_type">招生类型</string>
+    <string name="home_university_score_min_score">最低分</string>
+    <string name="home_university_score_year0">2020</string>
+    <string name="home_university_score_year1">2019</string>
+    <string name="home_university_score_year2">2018</string>
+    <string name="home_university_score_recruit_type_detail">普通类</string>
+    <string name="predict_hint_university_text">请输入院校全称，eg:北京大学</string>
+    <string name="predict_hint_score">请输入分数（整数）</string>
 </resources>

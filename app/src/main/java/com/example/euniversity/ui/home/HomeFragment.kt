@@ -1,6 +1,7 @@
 package com.example.euniversity.ui.home
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -12,28 +13,45 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.euniversity.MainActivity
 import com.example.euniversity.R
 import com.example.euniversity.adapter.HomeUniversityAdapter
 import com.example.euniversity.adapter.ImageAdapter
 import com.example.euniversity.entity.CommunityProblemAnswerItem
 import com.example.euniversity.entity.HomeUniversityItem
+import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.network.response.Response
+import com.example.euniversity.network.response.University
+import com.example.euniversity.utils.KeyBoardUtil
+import com.example.euniversity.utils.ResultEnum
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+import com.lcodecore.tkrefreshlayout.processor.RefreshProcessor
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.android.synthetic.main.home_fragment.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import kotlin.concurrent.thread
 
 class HomeFragment : Fragment() {
+    private val TAG="HomeFragment"
     private lateinit var mainActivity: MainActivity
     private lateinit var homeViewModel: HomeViewModel
 
-    private lateinit var universityTypeList:ArrayList<CheckBox>
-    private lateinit var universityLevelList:ArrayList<CheckBox>
-    private lateinit var educationLevelList:ArrayList<CheckBox>
-    private lateinit var universityNatureList:ArrayList<CheckBox>
-    private lateinit var areaList:ArrayList<CheckBox>
+    private var time=1
+    private var operation="init"
+
+    private val job= Job()
+    private val scope= CoroutineScope(job)
+
     private lateinit var allFilterList:ArrayList<ArrayList<CheckBox>>
+    private lateinit var allFilterStringList:ArrayList<String>
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -45,6 +63,8 @@ class HomeFragment : Fragment() {
         }
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        homeViewModel.universityIdList.postValue(ArrayList<Int>())
+        homeViewModel.universityList.postValue(ArrayList())
         val view = inflater.inflate(R.layout.home_fragment, container, false)
 
         //将图片配置到banner中实现图片轮播
@@ -53,21 +73,41 @@ class HomeFragment : Fragment() {
         banner.setAdapter(adapter)
             .addBannerLifecycleObserver(this)
             .setIndicator(CircleIndicator(context))
+        //初始化学校列表
+        time=1
+        operation="init"
+        operateUniversity("")
 
         //初始化筛选弹出窗口
         val popupWindow=initPopupWindow()
 
-        //初始化学校列表
-        initUniversity()
-
         //当viewModel的变量内容变化时触发观察者事件，将学校实例HomeUniversityItem适配到RecycleView中
         homeViewModel.universityList.observe(viewLifecycleOwner, Observer {
-            val recyclerAdapter=HomeUniversityAdapter(it)
+            val recyclerAdapter=HomeUniversityAdapter(it,mainActivity,homeViewModel.universityIdList.value!!)
             val universityList=view.findViewById<RecyclerView>(R.id.universityList)
             universityList.layoutManager=LinearLayoutManager(mainActivity)
             universityList.adapter=recyclerAdapter
             recyclerAdapter.notifyDataSetChanged()
         })
+
+        val refreshLayout=view.findViewById<TwinklingRefreshLayout>(R.id.refreshLayout)
+        refreshLayout.setAutoLoadMore(false)
+        refreshLayout.setEnableRefresh(false)
+        refreshLayout.setOnRefreshListener(object :RefreshListenerAdapter(){
+            override fun onRefresh(refreshLayout: TwinklingRefreshLayout?) {
+                Handler().postDelayed(Runnable {
+                    refreshLayout?.finishRefreshing()
+                },1000)
+            }
+
+            override fun onLoadMore(refreshLayout: TwinklingRefreshLayout?) {
+                Handler().postDelayed(Runnable {
+                    time+=1
+                    operateUniversity(view.findViewById<EditText>(R.id.searchEditView).text.toString())
+                    refreshLayout?.finishLoadmore()
+                },1000)
+            }
+        } )
 
         val floatingActionButton=view.findViewById<FloatingActionButton>(R.id.floatingActionButton)
 
@@ -86,10 +126,14 @@ class HomeFragment : Fragment() {
                 }
                 //根据搜索文本框中用户输入的文本在数据库中查询相应的大学
                 R.id.searchImage->{
-                    findSearchResult(searchEditView.text.toString())
+                    KeyBoardUtil.closeKeybord(mainActivity)
+                    time=1
+                    operation="search"
+                    operateUniversity(searchEditView.text.toString())
                 }
                 //用户点击筛选图标时弹出窗口供用户选择筛选方式
                 R.id.filterImage->{
+                    KeyBoardUtil.closeKeybord(mainActivity)
                     val rootView=LayoutInflater.from(mainActivity).inflate(R.layout.home_fragment,null)
                     popupWindow.showAtLocation(rootView,Gravity.BOTTOM,0,0)
                 }
@@ -101,6 +145,11 @@ class HomeFragment : Fragment() {
         filterImage.setOnClickListener(onClick)
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     /**
@@ -117,36 +166,36 @@ class HomeFragment : Fragment() {
 
     /**
      * 初始化学校列表，从数据库中获取信息生成列表赋值给viewModel的universityList
-     * 功能尚未实现，自定义数据测试
      */
-    private fun initUniversity(){
-        val universityList=ArrayList<HomeUniversityItem>()
-        universityList.add(HomeUniversityItem(R.drawable.university1,"清华大学","985 211 工科 北京市"))
-        universityList.add(HomeUniversityItem(R.drawable.university2,"哈尔滨工业大学",
-            "985 211 工科 黑龙江 哈尔滨市"))
-        universityList.add(HomeUniversityItem(R.drawable.university3,"南昌大学",
-            "211 综合 江西省 南昌市"))
-        universityList.add(HomeUniversityItem(R.drawable.university1,"清华大学","985 211 工科 北京市"))
-        thread {
-            homeViewModel.universityList.postValue(universityList)
+    /*private fun initUniversity(){
+//        universityList.add(HomeUniversityItem(R.drawable.university2,"哈尔滨工业大学",
+//            "985 211 工科 黑龙江 哈尔滨市 985 211 工科 黑龙江 哈尔滨市"))
+        scope.launch(Dispatchers.Main){
+            try {
+                val result=EUniversityNetwork.findUniversity();
+                displayUniversity(result)
+            } catch (e: SocketTimeoutException) {
+                Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
-    }
+    }*/
 
     /**
      * 根据搜索文本框中用户输入的文本在数据库中查询相应的大学，并修改viewModel中的universityList
      * 观察者观察到viewModel中的universityList内容变化后会自动在活动中将新的universityList内容加载到recycleView中
-     * 此部分数据库查询功能尚未实现，直接添加一个大学项作为结果（事实上查询结果只会更少，此处仅供测试使用）
      */
-    private fun findSearchResult(text:String){
-        val universityList=homeViewModel.universityList.value as ArrayList<HomeUniversityItem>
-        universityList.add(
-            HomeUniversityItem(R.drawable.university2,"哈尔滨工业大学",
-                "985 211 工科 黑龙江 哈尔滨市")
-        )
-        thread{
-            homeViewModel.universityList.postValue(universityList)
+    /*private fun findSearchResult(text:String){
+        scope.launch(Dispatchers.Main){
+            try {
+                val result=EUniversityNetwork.searchUniversity(text);
+                displayUniversity(result)
+            } catch (e: SocketTimeoutException) {
+                Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
-    }
+    }*/
 
     /**
      * 初始化弹出窗口，在用户点击筛选按钮时弹出筛选菜单窗口供用户进行筛选操作
@@ -193,6 +242,9 @@ class HomeFragment : Fragment() {
                 //确定数据库查询的语句，获得院校列表postvalue到viewModel的universityList变量中，观察者观察到变量变化后会自动修改
                 //recyclerView中的院校，此部分功能尚未实现，关闭popupWindow做测试使用
                 R.id.determine->{
+                    time=1
+                    operation="filter"
+                    operateUniversity("")
                     popupWindow.dismiss()
                 }
             }
@@ -211,7 +263,7 @@ class HomeFragment : Fragment() {
      * @param v 筛选页面形成的View
      */
     fun initFilterArrayList(v:View){
-        universityTypeList= arrayListOf(v.findViewById(R.id.universityType1),
+        val universityTypeList:ArrayList<CheckBox> = arrayListOf(v.findViewById(R.id.universityType1),
             v.findViewById(R.id.universityType2),
             v.findViewById(R.id.universityType3),
             v.findViewById(R.id.universityType4),
@@ -223,21 +275,24 @@ class HomeFragment : Fragment() {
             v.findViewById(R.id.universityType10),
             v.findViewById(R.id.universityType11),
             v.findViewById(R.id.universityType12),
-            v.findViewById(R.id.universityType13)
+            v.findViewById(R.id.universityType13),
+            v.findViewById(R.id.universityType14)
         )
-        universityLevelList= arrayListOf(v.findViewById(R.id.universityLevel1),
+        val universityLevelList:ArrayList<CheckBox> = arrayListOf(v.findViewById(R.id.universityLevel1),
             v.findViewById(R.id.universityLevel2),
             v.findViewById(R.id.universityLevel3)
         )
-        educationLevelList= arrayListOf(v.findViewById(R.id.educationLevel1),
+        val educationLevelList:ArrayList<CheckBox> = arrayListOf(v.findViewById(R.id.educationLevel1),
             v.findViewById(R.id.educationLevel2),
-            v.findViewById(R.id.educationLevel3)
+            v.findViewById(R.id.educationLevel3),
+            v.findViewById(R.id.educationLevel4)
         )
-        universityNatureList= arrayListOf(v.findViewById(R.id.universityNature1),
+        val universityNatureList:ArrayList<CheckBox> = arrayListOf(v.findViewById(R.id.universityNature1),
             v.findViewById(R.id.universityNature2),
-            v.findViewById(R.id.universityNature3)
+            v.findViewById(R.id.universityNature3),
+            v.findViewById(R.id.universityNature4)
         )
-        areaList= arrayListOf(v.findViewById(R.id.area1),
+        val provinceList:ArrayList<CheckBox> = arrayListOf(v.findViewById(R.id.area1),
             v.findViewById(R.id.area2),
             v.findViewById(R.id.area3),
             v.findViewById(R.id.area4),
@@ -273,22 +328,25 @@ class HomeFragment : Fragment() {
             v.findViewById(R.id.area34),
             v.findViewById(R.id.area35)
         )
-        allFilterList= arrayListOf(universityTypeList,universityLevelList,educationLevelList,universityNatureList,areaList)
+        allFilterList= arrayListOf(universityTypeList,universityLevelList,educationLevelList,universityNatureList,provinceList)
 
-        val universityTypeText= arrayListOf<String>("不限","综合","工科","农业","林业","医药","师范","语言",
-            "财经","政法","体育","艺术","民族")
-        val universityLevelText= arrayListOf<String>("不限","985","211","双一流")
-        val educationLevelText= arrayListOf<String>("不限","本科","专科")
-        val universityNatureText= arrayListOf<String>("不限","公立大学","民办高校")
-        val areaText= arrayListOf<String>("不限","北京","天津","河北","山西","内蒙古","辽宁","吉林","黑龙江",
+        val universityTypeText= arrayListOf<String>("不限","理工类","综合类","语言类","艺术类","农林类","民族类",
+                "医药类","师范类","财经类","体育类","政法类","军事类","其他")
+        val universityLevelText= arrayListOf<String>("不限","普通本科","专科（高职）")
+        val educationLevelText= arrayListOf<String>("不限","985","211","双一流")
+        val universityNatureText= arrayListOf<String>("不限","公办","民办","中外合作办学")
+        val provinceText= arrayListOf<String>("不限","北京","天津","河北","山西","内蒙古","辽宁","吉林","黑龙江",
             "上海","江苏","浙江","安徽","福建","江西","山东","河南","湖北","湖南","广东","广西","海南","重庆",
             "四川","贵州","云南","西藏","陕西","甘肃","青海","宁夏","新疆","台湾","香港","澳门")
+        allFilterStringList= arrayListOf(getAllFilterString(universityTypeText),getAllFilterString(universityLevelText),
+        getAllFilterString(educationLevelText),getAllFilterString(universityNatureText),getAllFilterString(provinceText))
+
 
         for (i in 0 until universityTypeList.size)  universityTypeList[i].text=universityTypeText[i]
         for (i in 0 until universityLevelList.size)  universityLevelList[i].text=universityLevelText[i]
         for (i in 0 until educationLevelList.size)  educationLevelList[i].text=educationLevelText[i]
         for (i in 0 until universityNatureList.size)  universityNatureList[i].text=universityNatureText[i]
-        for (i in 0 until areaList.size)  areaList[i].text=areaText[i]
+        for (i in 0 until provinceList.size)  provinceList[i].text=provinceText[i]
     }
 
     /**
@@ -353,6 +411,128 @@ class HomeFragment : Fragment() {
         for(i in 0 until allFilterList.size){
             for(j in 0 until allFilterList[i].size) {
                 allFilterList[i][j].setOnCheckedChangeListener(checkOnCheckedChanged)
+            }
+        }
+    }
+
+    /**
+     *筛选菜单点击确定时进行筛选并将结果返回
+     */
+    /*fun filterUniversity(){
+        val filterStringList=getFilterStringList()
+        scope.launch(Dispatchers.Main){
+            try {
+                //由于filterStringList生成时顺序与filterUniversity函数对应参数不匹配，需要调换顺序将合适的参数传入函数
+                val result=EUniversityNetwork.filterUniversity(filterStringList[0],
+                    filterStringList[1],filterStringList[4],filterStringList[2],filterStringList[3]);
+                displayUniversity(result)
+            } catch (e: SocketTimeoutException) {
+                Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }*/
+
+    /**
+     * 除学历层次外，其他筛选类型选择不限时，各个类型的向服务器发送的筛选列表字符串即数据库查询时使用的筛选列表字符串
+     */
+    fun getAllFilterString(filterText:ArrayList<String>):String{
+        var filterString=""
+        for (i in 1 until filterText.size){
+            filterString+="\""+filterText[i]+"\""+","
+        }
+        return filterString.substring(0,filterString.length-1)
+    }
+
+    /**
+     * 根据弹出的筛选菜单中用户选择的checkbox，返回各个类型的向服务器发送的筛选列表字符串形成的
+     * 字符串列表
+     */
+    fun getFilterStringList():ArrayList<String>{
+        val filterStringList=ArrayList<String>()
+        val list= arrayListOf<Int>(0,1,3,4)
+        //除学历层次外的其他筛选类型直接返回数据库查询时需要使用的筛选列表字符串，eg"\"综合类\""
+        for(i in list){
+            var filterString=""
+            for(checkbox in allFilterList[i]){
+                if(checkbox.isChecked)
+                    filterString+="\""+(checkbox.text.toString())+"\""+","
+            }
+            filterString=filterString.substring(0,filterString.length-1)
+            if (filterString.equals("\"不限\"")){
+                filterString=allFilterStringList[i]
+            }
+            filterStringList.add(filterString)
+        }
+        //学历层次数据库中有三个属性并且查询更复杂，直接返回用户选择的checkbox的text，中间用逗号隔开，
+        var filterString=""
+        for(checkbox in allFilterList[2]){
+            if(checkbox.isChecked)
+                filterString+=(checkbox.text.toString())+","
+        }
+        filterStringList.add(filterString.substring(0,filterString.length-1))
+        return filterStringList
+    }
+
+    /**
+     * 对院校进行的具体操作，初始化、筛选、查找等
+     */
+    fun operateUniversity(text: String){
+        scope.launch(Dispatchers.Main){
+            try {
+                val result:Response<University>
+                if(operation.equals("init")){
+                    result=EUniversityNetwork.findUniversity(time);
+                }else if(operation.equals("search")){
+                    result=EUniversityNetwork.searchUniversity(text,time);
+                }else {
+                    val filterStringList=getFilterStringList()
+                    //由于filterStringList生成时顺序与filterUniversity函数对应参数不匹配，需要调换顺序将合适的参数传入函数
+                    result = EUniversityNetwork.filterUniversity(
+                        filterStringList[0],
+                        filterStringList[1],
+                        filterStringList[4],
+                        filterStringList[2],
+                        filterStringList[3],
+                        time
+                    );
+                }
+                displayUniversityList(result)
+            } catch (e: SocketTimeoutException) {
+                Toast.makeText(mainActivity, "似乎没有网络，无法连接服务器！", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
+    }
+
+    /**
+     * 通过LiveData的postValue显示初始化学校列表、查找学校、筛选学校后的RecyclerView
+     */
+    fun displayUniversityList(result:Response<University>){
+        val universityIdList=if(time==1) ArrayList<Int>() else homeViewModel.universityIdList.value!!
+        val universityList=if(time==1) ArrayList<HomeUniversityItem>() else homeViewModel.universityList.value!!
+        when(result.code){
+            ResultEnum.INPUT_IS_NULL.code,ResultEnum.FILTER_UNIVERSITY_FAILE.code,ResultEnum.NO_UNIVERSITYS_IN_DATABASE.code,
+            ResultEnum.FIND_UNIVERSITY_FAILE.code->{
+                Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
+                if(time==1) {
+                    homeViewModel.universityIdList.postValue(ArrayList<Int>())
+                    homeViewModel.universityList.postValue(ArrayList<HomeUniversityItem>())
+                }
+            }
+            ResultEnum.FIND_SUCCESS.code->{
+                val universityListDB=result.data
+                for (university in universityListDB){
+                    universityIdList.add(university.id)
+                    universityList.add(
+                        HomeUniversityItem(university.logo,university.name,
+                            university.type+" "+university.province+" "+university.city+" "
+                                    +(if(university.f985.equals(1)) "985 " else "")+(if(university.f211.equals(1)) "211 " else "")
+                                    +(if(university.dualClass.equals("双一流")) "双一流" else "")))
+                }
+                homeViewModel.universityIdList.postValue(universityIdList)
+                homeViewModel.universityList.postValue(universityList)
             }
         }
     }

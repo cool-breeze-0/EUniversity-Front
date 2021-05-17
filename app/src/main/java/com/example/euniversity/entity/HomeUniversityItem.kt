@@ -4,4 +4,4 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class HomeUniversityItem(val universityImage:Int,val universityName:String,val universityAttribute:String):Parcelable
+data class HomeUniversityItem(val universityLogo:String,val universityName:String,val universityAttribute:String):Parcelable

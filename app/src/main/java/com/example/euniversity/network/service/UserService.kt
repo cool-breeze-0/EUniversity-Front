@@ -47,4 +47,9 @@ interface UserService {
     fun findUserByPhone(
         @Query("phone") phone:String
     ):Call<Response<User>>
+
+    @GET("user/sendSms")
+    fun sendSms(
+        @Query("phone") phone:String
+    ):Call<Response<String>>
 }

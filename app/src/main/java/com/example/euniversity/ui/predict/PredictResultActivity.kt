@@ -11,17 +11,21 @@ class PredictResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.predict_result_activity)
 
-        val result=intent.getIntExtra("result",0)
+        val result=intent.getStringExtra("result")
         predictResultData.setText("${result}%")
         //根据概率给出不同的警示信息
-        if(result>90){
-            predictResultWarning.setText("录取率很高，不要松懈哦")
-        }else if(result>75){
-            predictResultWarning.setText("录取率较高，继续努力哦")
-        }else if(result>60){
-            predictResultWarning.setText("录取率一般，加油哦")
+        if(result!!.toDouble()>90.0){
+            predictResultWarning.setText("录取率很高，不要松懈哦\n" +
+                    "(预测结果仅供参考)")
+        }else if(result.toDouble()>75){
+            predictResultWarning.setText("录取率较高，继续努力哦\n" +
+                    "(预测结果仅供参考)")
+        }else if(result.toDouble()>60){
+            predictResultWarning.setText("录取率一般，加油哦\n" +
+                    "(预测结果仅供参考)")
         }else{
-            predictResultWarning.setText("录取率较低，努力奋斗哦")
+            predictResultWarning.setText("录取率较低，努力奋斗哦\n" +
+                    "(预测结果仅供参考)")
         }
     }
     fun onClick(v: View) {

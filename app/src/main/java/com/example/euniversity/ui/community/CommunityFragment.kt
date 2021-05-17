@@ -3,6 +3,7 @@ package com.example.euniversity.ui.community
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +22,10 @@ import com.example.euniversity.entity.CommunityProblemAnswerItem
 import com.example.euniversity.network.EUniversityNetwork
 import com.example.euniversity.network.response.ProblemAnswer
 import com.example.euniversity.network.response.Response
+import com.example.euniversity.utils.KeyBoardUtil
 import com.example.euniversity.utils.ResultEnum
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.android.synthetic.main.community_problem_answer_item.*
@@ -40,6 +44,9 @@ class CommunityFragment : Fragment() {
     private val job= Job()
     private val scope= CoroutineScope(job)
 
+    private var time=1
+    private var operation="init"
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -51,6 +58,8 @@ class CommunityFragment : Fragment() {
         communityViewModel =
                 ViewModelProviders.of(this).get(CommunityViewModel::class.java)
         val view = inflater.inflate(R.layout.community_fragment, container, false)
+        communityViewModel.problemIdList.postValue(ArrayList())
+        communityViewModel.problemAnswerList.postValue(ArrayList())
 
         //将图片配置到banner中实现图片轮播
         val banner=view.findViewById<Banner<Int,ImageAdapter>>(R.id.communityBanner)
@@ -60,6 +69,8 @@ class CommunityFragment : Fragment() {
             .setIndicator(CircleIndicator(context))
 
         //初始化问题项列表
+        time=1
+        operation="init"
         initProblemAnswerList()
 
         //初始化排序菜单
@@ -75,6 +86,33 @@ class CommunityFragment : Fragment() {
             communityProblemAnwerList.adapter=recyclerAdapter
             recyclerAdapter.notifyDataSetChanged()
         })
+
+        val refreshLayout=view.findViewById<TwinklingRefreshLayout>(R.id.refreshLayout)
+        refreshLayout.setAutoLoadMore(false)
+        refreshLayout.setEnableRefresh(false)
+        refreshLayout.setOnRefreshListener(object : RefreshListenerAdapter(){
+            override fun onRefresh(refreshLayout: TwinklingRefreshLayout?) {
+                Handler().postDelayed(Runnable {
+                    refreshLayout?.finishRefreshing()
+                },1000)
+            }
+
+            override fun onLoadMore(refreshLayout: TwinklingRefreshLayout?) {
+                Handler().postDelayed(Runnable {
+//                    time+=1
+//                    operateUniversity(view.findViewById<EditText>(R.id.searchEditView).text.toString())
+                    time+=1
+                    when(operation){
+                        "init"->initProblemAnswerList()
+                        "search"->findSearchResult(view.findViewById<EditText>(R.id.searchEditView).text.toString())
+                        "timeSort"->findSortResult("timeSort")
+                        "qualitySort"->findSortResult("qualitySort")
+                        "comprehensiveSort"->findSortResult("comprehensiveSort")
+                    }
+                    refreshLayout?.finishLoadmore()
+                },1000)
+            }
+        } )
 
         //为各个组件添加点击事件
         val myProblemImage=view.findViewById<ImageView>(R.id.myProblemImage)
@@ -110,7 +148,9 @@ class CommunityFragment : Fragment() {
                                         Toast.makeText(mainActivity, "您还没有提过问题", Toast.LENGTH_SHORT).show()
                                     }
                                     ResultEnum.FIND_SUCCESS.code -> {
-                                        problemIdList=upsideDownData(result.data)
+                                        for(i in 0 until result.data.size){
+                                            problemIdList.add(result.data[i].problem.id)
+                                        }
                                         problemAnswerList=resultToProblemAnser(result)
                                     }
                                 }
@@ -146,7 +186,9 @@ class CommunityFragment : Fragment() {
                                         Toast.makeText(mainActivity, "您还没有回答问题", Toast.LENGTH_SHORT).show()
                                     }
                                     ResultEnum.FIND_SUCCESS.code -> {
-                                        problemIdList=upsideDownData(result.data)
+                                        for(i in 0 until result.data.size){
+                                            problemIdList.add(result.data[i].problem.id)
+                                        }
                                         problemAnswerList=resultToProblemAnser(result)
                                     }
                                 }
@@ -177,7 +219,9 @@ class CommunityFragment : Fragment() {
                                     Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
                                 }
                                 ResultEnum.FIND_SUCCESS.code -> {
-                                    problemIdList=upsideDownData(result.data)
+                                    for(i in 0 until result.data.size){
+                                        problemIdList.add(result.data[i].problem.id)
+                                    }
                                     problemAnswerList = resultToProblemAnser(result)
                                 }
                             }
@@ -196,10 +240,14 @@ class CommunityFragment : Fragment() {
                 }
                 //根据搜索文本框中用户输入的文本在数据库中查询相应的问题项
                 R.id.searchImage->{
+                    time=1
+                    operation="search"
+                    KeyBoardUtil.closeKeybord(mainActivity)
                     findSearchResult(searchEditView.text.toString())
                 }
                 //点击排序图标时弹出菜单供用户选择排序方式
                 R.id.sortImage->{
+                    KeyBoardUtil.closeKeybord(mainActivity)
                     popupMenu.show()
                 }
                 //点击我要提问按钮进入提问活动页面，并将处理问题类型发送给activity
@@ -263,12 +311,18 @@ class CommunityFragment : Fragment() {
             when(it.itemId){
                 //根据用户选择的排序方法菜单项将查询的问题项进行排序并在recycleView中更新
                 R.id.comprehensiveSortItem-> {
+                    time=1
+                    operation="comprehensiveSort"
                     findSortResult("comprehensiveSort")
                 }
                 R.id.qualitySortItem->{
+                    time=1
+                    operation="qualitySort"
                     findSortResult("qualitySort")
                 }
                 R.id.timeSortItem->{
+                    time=1
+                    operation="timeSort"
                     findSortResult("timeSort")
                 }
             }
@@ -279,13 +333,13 @@ class CommunityFragment : Fragment() {
     /**
      * 倒置数据库中传来的问题列表数据，与recyclerView同步，便于数据操作
      */
-    fun upsideDownData(data:List<ProblemAnswer>):ArrayList<Int> {
+    /*fun upsideDownData(data:List<ProblemAnswer>):ArrayList<Int> {
         val newData = ArrayList<Int>();
         for(i in 1..data.size){
             newData.add(data[data.size-i].problem.id)
         }
         return newData
-    }
+    }*/
 
     /**
      * 初始化问题项列表，从数据库中获取问题及回答
@@ -295,14 +349,19 @@ class CommunityFragment : Fragment() {
 //        "2020.12.5提问","答：  同学你好！\n" + "高考是人生的一件大事，这是毫无疑...","2021.1.15回答"))
         scope.launch(Dispatchers.Main){
             try {
-                val result = EUniversityNetwork.findAllProblemAnswer();
+                val result = EUniversityNetwork.findAllProblemAnswer(time)
+                val problemAnswerList=if(time==1) ArrayList<CommunityProblemAnswerItem>() else communityViewModel.problemAnswerList.value!!
+                val problemIdList=if(time==1) ArrayList<Int>() else communityViewModel.problemIdList.value!!
                 when(result.code){
                     ResultEnum.NO_PROBLEMS_IN_DATABASE.code->{
                         Toast.makeText(mainActivity,result.msg,Toast.LENGTH_SHORT).show()
                     }
                     ResultEnum.FIND_SUCCESS.code->{
-                        val problemAnswerList=resultToProblemAnser(result)
-                        communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                        problemAnswerList.addAll(resultToProblemAnser(result))
+                        for(i in 0 until result.data.size){
+                            problemIdList.add(result.data[i].problem.id)
+                        }
+                        communityViewModel.problemIdList.postValue(problemIdList)
                         communityViewModel.problemAnswerList.postValue(problemAnswerList)
                     }
                 }
@@ -319,9 +378,9 @@ class CommunityFragment : Fragment() {
      */
     fun resultToProblemAnser(result:Response<ProblemAnswer>):ArrayList<CommunityProblemAnswerItem>{
         val problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
-        for(i in 1 .. result.data.size ){
-            val problem=result.data[result.data.size-i].problem
-            val answers=result.data[result.data.size-i].answers
+        for(i in 0 until result.data.size ){
+            val problem=result.data[i].problem
+            val answers=result.data[i].answers
             val problemTime=problem.time.substring(0,10)
             val problemContent=
                 if(problem.content.length>35) problem.content.substring(0,35)+"..." else problem.content
@@ -365,20 +424,26 @@ class CommunityFragment : Fragment() {
         }else {
             scope.launch(Dispatchers.Main) {
                 try {
-                    var problemAnswerList=ArrayList<CommunityProblemAnswerItem>()
-                    val result = EUniversityNetwork.searchProblem(text);
+                    val problemAnswerList=if(time==1) ArrayList<CommunityProblemAnswerItem>() else communityViewModel.problemAnswerList.value!!
+                    val problemIdList=if(time==1) ArrayList<Int>() else communityViewModel.problemIdList.value!!
+                    val result = EUniversityNetwork.searchProblem(text,time);
                     when (result.code) {
                         ResultEnum.INPUT_IS_NULL.code -> {
                             Toast.makeText(mainActivity, result.msg, Toast.LENGTH_SHORT).show()
                         }
                         ResultEnum.FIND_PROBLEM_FAILE.code -> {
-                            Toast.makeText(mainActivity, "抱歉，没有匹配到问题", Toast.LENGTH_SHORT).show()
-                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
-                            communityViewModel.problemAnswerList.postValue(problemAnswerList)
+                            Toast.makeText(mainActivity, "抱歉，没有匹配到更多问题", Toast.LENGTH_SHORT).show()
+                            if(time==1) {
+                                communityViewModel.problemIdList.postValue(problemIdList)
+                                communityViewModel.problemAnswerList.postValue(problemAnswerList)
+                            }
                         }
                         ResultEnum.FIND_SUCCESS.code -> {
-                            problemAnswerList= resultToProblemAnser(result)
-                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                            problemAnswerList.addAll(resultToProblemAnser(result))
+                            for(i in 0 until result.data.size){
+                                problemIdList.add(result.data[i].problem.id)
+                            }
+                            communityViewModel.problemIdList.postValue(problemIdList)
                             communityViewModel.problemAnswerList.postValue(problemAnswerList)
                         }
                     }
@@ -406,18 +471,23 @@ class CommunityFragment : Fragment() {
         }else{
             scope.launch(Dispatchers.Main){
                 try {
+                    val problemAnswerList=if(time==1) ArrayList<CommunityProblemAnswerItem>() else communityViewModel.problemAnswerList.value!!
+                    val problemIdList=if(time==1) ArrayList<Int>() else communityViewModel.problemIdList.value!!
                     val result:Response<ProblemAnswer>;
                     if(text.equals("qualitySort"))
-                        result= EUniversityNetwork.qualitySortProblem()
+                        result= EUniversityNetwork.qualitySortProblem(time)
                     else
-                        result = EUniversityNetwork.comprehensiveSortProblem()
+                        result = EUniversityNetwork.comprehensiveSortProblem(time)
                     when(result.code){
                         ResultEnum.NO_PROBLEMS_IN_DATABASE.code->{
                             Toast.makeText(mainActivity,result.msg,Toast.LENGTH_SHORT).show()
                         }
                         ResultEnum.FIND_SUCCESS.code->{
-                            val problemAnswerList=resultToProblemAnser(result)
-                            communityViewModel.problemIdList.postValue(upsideDownData(result.data))
+                            problemAnswerList.addAll(resultToProblemAnser(result))
+                            for(i in 0 until result.data.size){
+                                problemIdList.add(result.data[i].problem.id)
+                            }
+                            communityViewModel.problemIdList.postValue(problemIdList)
                             communityViewModel.problemAnswerList.postValue(problemAnswerList)
                         }
                     }

@@ -203,11 +203,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
                 app:layout_constraintVertical_bias="0.0">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/communityProblemAnswerList"
+                <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+                    android:id="@+id/refreshLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/communityProblemAnswerList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

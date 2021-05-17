@@ -6,6 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.euniversity.entity.HomeUniversityItem
 
 class HomeViewModel : ViewModel() {
-
-    var universityList=MutableLiveData<List<HomeUniversityItem>>()
+    var universityIdList= MutableLiveData<ArrayList<Int>>()
+    var universityList=MutableLiveData<ArrayList<HomeUniversityItem>>()
 }

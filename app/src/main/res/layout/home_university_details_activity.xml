@@ -56,43 +56,122 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_margin="@dimen/universal_margin_left_right_short"
-                android:background="@drawable/shape_cornors_blue">
-
-                <ImageView
-                    android:id="@+id/universityImage"
-                    android:layout_width="@dimen/home_university_icon_size"
-                    android:layout_height="@dimen/home_university_icon_size"
-                    android:layout_margin="@dimen/universal_margin_left_right" />
-
-                <RelativeLayout
+                android:background="@drawable/shape_cornors">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/universityLogo"
+                        android:layout_width="@dimen/home_university_icon_size"
+                        android:layout_height="@dimen/home_university_icon_size"
+                        android:layout_margin="@dimen/universal_margin_left_right" />
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/universityName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginTop="@dimen/universal_margin_left_right_short"
+                            android:textSize="@dimen/home_university_name_text_size"
+                            android:textColor="@color/homeUniversityAttributeTextColor"
+                            tools:text="TextView" />
+                    </RelativeLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
                     <TextView
-                        android:id="@+id/universityName"
+                        android:id="@+id/level"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="@dimen/universal_margin_left_right_short"
-                        android:textSize="@dimen/home_university_name_text_size"
-                        tools:text="TextView" />
-
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor"/>
                     <TextView
-                        android:id="@+id/universityAttribute"
+                        android:id="@+id/type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="@dimen/universal_margin_left_right_short"
-                        tools:text="TextView" />
-                </RelativeLayout>
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor"/>
+                    <TextView
+                        android:id="@+id/nature"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor"/>
+                    <TextView
+                        android:id="@+id/educationLevel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor"/>
+                    <TextView
+                        android:id="@+id/provinceCity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor"/>
+
+                    <TextView
+                        android:id="@+id/url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/universal_margin_left_right"
+                        android:layout_marginBottom="@dimen/universal_margin_left_right"
+                        android:textColor="@color/homeUniversityAttributeTextColor" />
+                </LinearLayout>
             </LinearLayout>
-            <TextView
-                android:id="@+id/universityIntroduction"
-                android:layout_margin="@dimen/universal_margin_left_right_short"
-                android:background="@drawable/shape_cornors"
-                android:padding="@dimen/universal_padding"
+            <ImageView
+                android:id="@+id/universityImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/universal_margin_left_right_short"
+                android:layout_marginEnd="@dimen/universal_margin_left_right_short"
+                android:layout_marginBottom="@dimen/universal_margin_left_right_short"/>
+            <LinearLayout
+                android:background="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:onClick="onClick"
+                    android:id="@+id/universityIntroduction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/universal_padding"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/home_university_details_introduction"
+                    android:textSize="@dimen/home_university_details_choice_text_size" />
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/appBackground" />
+                <TextView
+                    android:onClick="onClick"
+                    android:id="@+id/universityScore"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/universal_padding"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/home_university_details_score"
+                    android:textSize="@dimen/home_university_details_choice_text_size" />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/appBackground" />
+            <FrameLayout
+                android:id="@+id/universityDetailsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

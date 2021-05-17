@@ -2,6 +2,7 @@ package com.example.euniversity.network
 
 import com.example.euniversity.network.response.Problem
 import com.example.euniversity.network.service.CommunityService
+import com.example.euniversity.network.service.UniversityService
 import com.example.euniversity.network.service.UserService
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,11 +36,14 @@ object EUniversityNetwork {
     suspend fun findUserByPhone(phone: String)=
         userService.findUserByPhone(phone).await()
 
+    suspend fun sendSms(phone: String)=
+        userService.sendSms(phone).await()
+
     //问答社区模块网络请求
     private val communityService=ServiceCreator.create<CommunityService>()
 
-    suspend fun findAllProblemAnswer()=
-        communityService.findAllProblemAnswer().await()
+    suspend fun findAllProblemAnswer(time: Int)=
+        communityService.findAllProblemAnswer(time).await()
 
     suspend fun askProblem(content:String,time: String,userPhone:String)=
         communityService.askProblem(content, time, userPhone).await()
@@ -53,14 +57,14 @@ object EUniversityNetwork {
     suspend fun commonProblem()=
         communityService.commonProblem().await()
 
-    suspend fun qualitySortProblem()=
-        communityService.qualitySortProblem().await()
+    suspend fun qualitySortProblem(time: Int)=
+        communityService.qualitySortProblem(time).await()
 
-    suspend fun comprehensiveSortProblem()=
-        communityService.comprehensiveSortProblem().await()
+    suspend fun comprehensiveSortProblem(time: Int)=
+        communityService.comprehensiveSortProblem(time).await()
 
-    suspend fun searchProblem(text:String)=
-        communityService.searchProblem(text).await()
+    suspend fun searchProblem(text:String,time: Int)=
+        communityService.searchProblem(text,time).await()
 
     suspend fun isliked(userPhone: String,answerId:Int)=
         communityService.isliked(userPhone, answerId).await()
@@ -82,6 +86,32 @@ object EUniversityNetwork {
 
     suspend fun updateAnswer(answerId: Int,content:String,time:String)=
         communityService.updateAnswer(answerId,content,time).await()
+
+    //首页模块请求
+    private val universityService=ServiceCreator.create<UniversityService>()
+
+    suspend fun findUniversity(time:Int)=
+        universityService.findUniversity(time).await()
+
+    suspend fun searchUniversity(text: String,time:Int)=
+        universityService.searchUniversity(text,time).await()
+
+    suspend fun filterUniversity(universityTypeString:String,universityLevelString:String,educationLevelString:String,
+                                 universityNatureString:String,provinceString:String,time:Int)=
+        universityService.filterUniversity(universityTypeString, universityLevelString,
+            educationLevelString, universityNatureString, provinceString,time).await()
+
+    suspend fun findUniversityById(universityId:Int)=
+        universityService.findUniversityById(universityId).await()
+
+    suspend fun findUniversityIntroductionById(universityId: Int)=
+        universityService.findUniversityIntroductionById(universityId).await()
+
+    suspend fun findUniversityScore(universityId: Int,province:String,division:String)=
+        universityService.findUniversityScore(universityId, province, division).await()
+
+    suspend fun findUniversityIdByName(universityName:String)=
+        universityService.findUniversityIdByName(universityName).await()
 
     private suspend fun <T> Call<T>.await():T{
         return suspendCoroutine {continuation ->

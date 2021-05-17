@@ -65,6 +65,7 @@ class UserLoginFragment : Fragment() {
                     val phone=view.findViewById<EditText>(R.id.phone).text.toString()
                     val password=view.findViewById<EditText>(R.id.password).text.toString()
                     val checkBox=view.findViewById<CheckBox>(R.id.checkBox)
+                    Log.e(TAG,password)
                     if(!checkBox.isChecked){
                         Toast.makeText(userAccountActivity,"请同意用户协议和隐私政策！", Toast.LENGTH_SHORT).show()
                     }else if (phone.equals("")){

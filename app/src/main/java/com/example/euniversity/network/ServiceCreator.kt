@@ -12,6 +12,9 @@ object ServiceCreator
         connectTimeout(3, TimeUnit.SECONDS).
         readTimeout(10, TimeUnit.SECONDS).
         writeTimeout(10, TimeUnit.SECONDS).build()
+    fun getBASE_URL():String{
+        return BASE_URL;
+    }
     private val retrofit= Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(client)
