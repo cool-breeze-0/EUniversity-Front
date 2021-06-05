@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.example.euniversity.MainActivity
@@ -12,6 +13,7 @@ import com.example.euniversity.network.EUniversityNetwork
 import com.example.euniversity.network.response.Answer
 import com.example.euniversity.network.response.Problem
 import com.example.euniversity.network.response.Response
+import com.example.euniversity.utils.KeyBoardUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.android.synthetic.main.community_ask_or_answer_activity.*
 import kotlinx.coroutines.CoroutineScope
@@ -159,5 +161,14 @@ class CommunityAskOrAnswerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if(ev?.action== MotionEvent.ACTION_DOWN){
+            val v=currentFocus
+            if(KeyBoardUtil.isShouldHideInput(v, ev)){
+                KeyBoardUtil.closeKeybord(this)
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

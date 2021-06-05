@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.euniversity.R
 import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.utils.KeyBoardUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.android.synthetic.main.user_profile_information_activity.*
 import kotlinx.coroutines.*
@@ -149,5 +151,14 @@ class UserProfileInformationActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if(ev?.action== MotionEvent.ACTION_DOWN){
+            val v=currentFocus
+            if(KeyBoardUtil.isShouldHideInput(v, ev)){
+                KeyBoardUtil.closeKeybord(this)
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

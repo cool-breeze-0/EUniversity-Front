@@ -126,14 +126,12 @@ class HomeFragment : Fragment() {
                 }
                 //根据搜索文本框中用户输入的文本在数据库中查询相应的大学
                 R.id.searchImage->{
-                    KeyBoardUtil.closeKeybord(mainActivity)
                     time=1
                     operation="search"
                     operateUniversity(searchEditView.text.toString())
                 }
                 //用户点击筛选图标时弹出窗口供用户选择筛选方式
                 R.id.filterImage->{
-                    KeyBoardUtil.closeKeybord(mainActivity)
                     val rootView=LayoutInflater.from(mainActivity).inflate(R.layout.home_fragment,null)
                     popupWindow.showAtLocation(rootView,Gravity.BOTTOM,0,0)
                 }

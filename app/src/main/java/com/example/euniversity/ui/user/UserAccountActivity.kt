@@ -3,9 +3,11 @@ package com.example.euniversity.ui.user
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import com.example.euniversity.R
 import com.example.euniversity.utils.ActivityUtil
+import com.example.euniversity.utils.KeyBoardUtil
 
 class UserAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,5 +28,14 @@ class UserAccountActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if(ev?.action== MotionEvent.ACTION_DOWN){
+            val v=currentFocus
+            if(KeyBoardUtil.isShouldHideInput(v, ev)){
+                KeyBoardUtil.closeKeybord(this)
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

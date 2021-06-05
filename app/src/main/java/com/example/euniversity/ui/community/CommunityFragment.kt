@@ -242,12 +242,10 @@ class CommunityFragment : Fragment() {
                 R.id.searchImage->{
                     time=1
                     operation="search"
-                    KeyBoardUtil.closeKeybord(mainActivity)
                     findSearchResult(searchEditView.text.toString())
                 }
                 //点击排序图标时弹出菜单供用户选择排序方式
                 R.id.sortImage->{
-                    KeyBoardUtil.closeKeybord(mainActivity)
                     popupMenu.show()
                 }
                 //点击我要提问按钮进入提问活动页面，并将处理问题类型发送给activity

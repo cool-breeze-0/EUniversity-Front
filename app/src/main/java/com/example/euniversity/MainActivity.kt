@@ -1,8 +1,11 @@
 package com.example.euniversity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.widget.EditText
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -15,6 +18,8 @@ import com.example.euniversity.ui.predict.PredictFragment
 import com.example.euniversity.ui.user.UserAccountActivity
 import com.example.euniversity.ui.user.UserFragment
 import com.example.euniversity.utils.ActivityUtil
+import com.example.euniversity.utils.KeyBoardUtil
+import com.example.euniversity.utils.KeyBoardUtil.isShouldHideInput
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -46,4 +51,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if(ev?.action==MotionEvent.ACTION_DOWN){
+            val v=currentFocus
+            if(isShouldHideInput(v,ev)){
+                KeyBoardUtil.closeKeybord(this)
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
 }

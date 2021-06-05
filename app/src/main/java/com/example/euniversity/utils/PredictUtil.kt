@@ -7,11 +7,13 @@ import java.lang.Exception
 
 object PredictUtil {
     fun getPredictResult(grades:List<String>,grade: Int):Double{
+        //数据转化为double类型
         val data=doubleArrayOf(grades[0].toDouble(),grades[1].toDouble(),grades[2].toDouble())
-        System.out.println(data[0].toString()+" "+data[1].toString()+" "+data[2].toString())
-        val mean=Mean().evaluate(data)
-        val sd=StandardDeviation().evaluate(data,mean)
+        val mean=Mean().evaluate(data)//样本的均值
+        val sd=StandardDeviation().evaluate(data,mean)//样本的方差
+        //根据样本均值和方差构建正态分布
         val distribution=NormalDistribution(mean, sd)
+        //计算概率
         try{
             val result=distribution.cumulativeProbability(grade.toDouble())
             return result;

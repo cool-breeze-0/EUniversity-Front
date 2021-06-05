@@ -167,4 +167,5 @@ class CommunityAnswerDetailsActivity : AppCompatActivity() {
         super.onDestroy()
         job.cancel()
     }
+
 }

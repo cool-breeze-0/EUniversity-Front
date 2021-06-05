@@ -13,7 +13,8 @@ import com.example.euniversity.MainActivity
 import com.example.euniversity.R
 import com.example.euniversity.network.EUniversityNetwork
 import com.example.euniversity.utils.ActivityUtil
-import com.example.euniversity.utils.NetworkStatus
+import com.example.euniversity.utils.LimitInputTextWeather
+import com.example.euniversity.utils.PasswordUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.coroutines.*
 import java.net.SocketTimeoutException
@@ -37,6 +38,10 @@ class UserLoginFragment : Fragment() {
         }
         // Inflate the layout for this fragment
         val view=inflater.inflate(R.layout.user_login_fragment, container, false)
+
+        //设置密码不能输入中文
+        val passwordEditText=view.findViewById<EditText>(R.id.password)
+        passwordEditText.addTextChangedListener(LimitInputTextWeather(passwordEditText))
 
         //为userLoginFragment中的各个组件设置点击事件
         val userAccountForgetPassword:TextView=view.findViewById(R.id.userAccountForgetPassword)
@@ -77,7 +82,8 @@ class UserLoginFragment : Fragment() {
                     }else{
                         scope.launch(Dispatchers.Main){
                             try {
-                                val result = EUniversityNetwork.login(phone, password)
+                                val passwordMD5= PasswordUtil.encode(password)
+                                val result = EUniversityNetwork.login(phone, passwordMD5)
                                 when (result.code) {
                                     ResultEnum.PASSWORD_IS_WRONG.code, ResultEnum.INPUT_IS_NULL.code, ResultEnum.USER_NOT_EXIST.code -> {
                                         Toast.makeText(

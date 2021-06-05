@@ -13,6 +13,8 @@ import android.widget.Toast
 import com.example.euniversity.R
 import com.example.euniversity.network.EUniversityNetwork
 import com.example.euniversity.utils.ActivityUtil
+import com.example.euniversity.utils.LimitInputTextWeather
+import com.example.euniversity.utils.PasswordUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.coroutines.*
 import java.net.SocketTimeoutException
@@ -36,6 +38,14 @@ class UserChangePasswordFragment : Fragment() {
         // Inflate the layout for this fragment
         val view=inflater.inflate(R.layout.user_change_password_fragment, container, false)
 
+        //设置密码不能输入中文
+        val passwordEditText=view.findViewById<EditText>(R.id.password)
+        passwordEditText.addTextChangedListener(LimitInputTextWeather(passwordEditText))
+        val newPasswordEditText=view.findViewById<EditText>(R.id.newPassword)
+        newPasswordEditText.addTextChangedListener(LimitInputTextWeather(newPasswordEditText))
+        val newPasswordEditText2=view.findViewById<EditText>(R.id.newPassword2)
+        newPasswordEditText2.addTextChangedListener(LimitInputTextWeather(newPasswordEditText2))
+
         val finishButton:Button =view.findViewById(R.id.finishButton)
         val userAccountForgetPassword:TextView=view.findViewById(R.id.userAccountForgetPassword)
         val onClick=View.OnClickListener {
@@ -57,15 +67,19 @@ class UserChangePasswordFragment : Fragment() {
                             Toast.makeText(userAccountActivity, "原密码不能为空！", Toast.LENGTH_SHORT).show()
                         } else if (newPassword.equals("")) {
                             Toast.makeText(userAccountActivity, "新密码不能为空！", Toast.LENGTH_SHORT).show()
+                        }else if(password.length<6||password.length>6){
+                            Toast.makeText(userAccountActivity,"新密码长度必须在6-20位！",Toast.LENGTH_SHORT).show()
                         } else if (!newPassword.equals(newPassword2)) {
                             Toast.makeText(userAccountActivity, "两次输入的新密码不一致！", Toast.LENGTH_SHORT).show()
                         } else {
                             scope.launch(Dispatchers.Main) {
                                 try {
+                                    val passwordMD5= PasswordUtil.encode(password)
+                                    val newPasswordMD5= PasswordUtil.encode(newPassword)
                                     val result = EUniversityNetwork.changePassword(
                                         phone!!,
-                                        password,
-                                        newPassword
+                                        passwordMD5,
+                                        newPasswordMD5
                                     )
                                     when (result.code) {
                                         ResultEnum.INPUT_IS_NULL.code, ResultEnum.USER_NOT_EXIST.code, ResultEnum.PASSWORD_IS_WRONG.code -> {

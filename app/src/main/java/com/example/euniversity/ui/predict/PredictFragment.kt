@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,15 +79,15 @@ class PredictFragment : Fragment() {
                     val universityInput =
                         view.findViewById<EditText>(R.id.universityInput).text.toString()
                     val scoreInput = view.findViewById<EditText>(R.id.scoreInput).text.toString()
-                    if (universityInput.equals("")) {
+                    if (admissionDivisionInput.text.toString().equals("")) {
+                        Toast.makeText(context, "请选择录取科类！", Toast.LENGTH_SHORT).show()
+                    }else if (provinceInput.text.toString().equals("")) {
+                        Toast.makeText(context, "请选择生源地！", Toast.LENGTH_SHORT).show()
+                    }else if (universityInput.equals("")) {
                         Toast.makeText(context, "请输入院校全称！", Toast.LENGTH_SHORT).show()
                     } else if (scoreInput.equals("")) {
                         Toast.makeText(context, "请输入预估分数！", Toast.LENGTH_SHORT).show()
-                    } else if (admissionDivisionInput.equals("")) {
-                        Toast.makeText(context, "请选择录取科类！", Toast.LENGTH_SHORT).show()
-                    }else if (provinceInput.equals("")) {
-                        Toast.makeText(context, "请选择生源地！", Toast.LENGTH_SHORT).show()
-                    }else {
+                    } else  {
                         scope.launch(Dispatchers.Main) {
                             try {
                                 val universityIdResult =

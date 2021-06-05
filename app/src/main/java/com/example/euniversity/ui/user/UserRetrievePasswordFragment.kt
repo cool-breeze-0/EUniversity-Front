@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.euniversity.R
 import com.example.euniversity.network.EUniversityNetwork
 import com.example.euniversity.utils.ActivityUtil
+import com.example.euniversity.utils.LimitInputTextWeather
+import com.example.euniversity.utils.PasswordUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.coroutines.*
 import java.net.SocketTimeoutException
@@ -39,6 +41,12 @@ class UserRetrievePasswordFragment : Fragment() {
         val view=inflater.inflate(R.layout.user_retrieve_password_fragment, container, false)
         viewModel = ViewModelProviders.of(this).get(UserRetrievePasswordViewModel::class.java)
         viewModel.code.postValue("alskjdflasjdflasjdfl")
+
+        //设置密码不能输入中文
+        val passwordEditText=view.findViewById<EditText>(R.id.password)
+        passwordEditText.addTextChangedListener(LimitInputTextWeather(passwordEditText))
+        val passwordEditText2=view.findViewById<EditText>(R.id.password2)
+        passwordEditText2.addTextChangedListener(LimitInputTextWeather(passwordEditText2))
 
         val getVerificationCodeTextView: TextView =view.findViewById(R.id.getVerificationCodeTextView)
         val finishButton: Button =view.findViewById(R.id.finishButton)
@@ -95,6 +103,8 @@ class UserRetrievePasswordFragment : Fragment() {
                         Toast.makeText(userAccountActivity,"手机号不能为空！",Toast.LENGTH_SHORT).show()
                     }else if(password.equals("")){
                         Toast.makeText(userAccountActivity,"密码不能为空！",Toast.LENGTH_SHORT).show()
+                    }else if(password.length<6||password.length>6){
+                        Toast.makeText(userAccountActivity,"密码长度必须在6-20位！",Toast.LENGTH_SHORT).show()
                     }else if(!password2.equals(password)){
                         Toast.makeText(userAccountActivity,"两次输入的密码不一致！",Toast.LENGTH_SHORT).show()
                     }else if (phone.length!=11){
@@ -104,7 +114,8 @@ class UserRetrievePasswordFragment : Fragment() {
                     }else{
                         scope.launch(Dispatchers.Main) {
                             try {
-                                val result = EUniversityNetwork.retrievePassword(phone, password)
+                                val passwordMD5= PasswordUtil.encode(password)
+                                val result = EUniversityNetwork.retrievePassword(phone, passwordMD5)
                                 when (result.code) {
                                     ResultEnum.INPUT_IS_NULL.code, ResultEnum.USER_NOT_EXIST.code, ResultEnum.RETRIEVE_PASSWORD_FAILD.code -> {
                                         Toast.makeText(

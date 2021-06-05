@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.euniversity.R
 import com.example.euniversity.network.EUniversityNetwork
+import com.example.euniversity.utils.LimitInputTextWeather
+import com.example.euniversity.utils.PasswordUtil
 import com.example.euniversity.utils.ResultEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +42,12 @@ class UserRegisterFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(UserRegisterViewModel::class.java)
         viewModel.code.postValue("alskjdflasjdflasjdfl")
 
+        //设置密码不能输入中文
+        val passwordEditText=view.findViewById<EditText>(R.id.password)
+        passwordEditText.addTextChangedListener(LimitInputTextWeather(passwordEditText))
+        val passwordEditText2=view.findViewById<EditText>(R.id.password2)
+        passwordEditText2.addTextChangedListener(LimitInputTextWeather(passwordEditText2))
+
         val userProtocol=view.findViewById<TextView>(R.id.userProtocol)
         val privatePolicy=view.findViewById<TextView>(R.id.privatePolicy)
         val getVerificationCodeTextView:TextView=view.findViewById(R.id.getVerificationCodeTextView)
@@ -56,12 +64,12 @@ class UserRegisterFragment : Fragment() {
                         Toast.makeText(userAccountActivity,"距上次获取验证码不足一分钟,请稍后再获取",Toast.LENGTH_SHORT).show()
                     }else{
                         val phone=view.findViewById<EditText>(R.id.phone).text.toString()
-                        time= LocalDateTime.now()
                         if(phone.length!=11){
                             Toast.makeText(userAccountActivity,"请输入正确的手机号！",Toast.LENGTH_SHORT).show()
                         }else {
                             scope.launch(Dispatchers.Main) {
                                 try {
+                                    time= LocalDateTime.now()
                                     val result = EUniversityNetwork.sendSms(phone)
                                     Toast.makeText(
                                         userAccountActivity,
@@ -106,6 +114,8 @@ class UserRegisterFragment : Fragment() {
                         Toast.makeText(userAccountActivity,"手机号不能为空！",Toast.LENGTH_SHORT).show()
                     }else if(password.equals("")){
                         Toast.makeText(userAccountActivity,"密码不能为空！",Toast.LENGTH_SHORT).show()
+                    }else if(password.length<6||password.length>6){
+                        Toast.makeText(userAccountActivity,"密码长度必须在6-20位！",Toast.LENGTH_SHORT).show()
                     }else if(!password2.equals(password)){
                         Toast.makeText(userAccountActivity,"两次输入的密码不一致！",Toast.LENGTH_SHORT).show()
                     }else if (phone.length!=11){
@@ -115,7 +125,8 @@ class UserRegisterFragment : Fragment() {
                     }else{
                         scope.launch(Dispatchers.Main) {
                             try {
-                                val result = EUniversityNetwork.register(phone, password)
+                                val passwordMD5=PasswordUtil.encode(password)
+                                val result = EUniversityNetwork.register(phone, passwordMD5)
                                 when (result.code) {
                                     ResultEnum.INPUT_IS_NULL.code, ResultEnum.USER_IS_EXIST.code, ResultEnum.REGISTER_FAILD.code -> {
                                         Toast.makeText(
